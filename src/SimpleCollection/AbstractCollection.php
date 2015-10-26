@@ -1,5 +1,5 @@
 <?php
-namespace DefaultCollection;
+namespace SimpleCollection;
 
 /**
  * abstract collection
@@ -7,12 +7,12 @@ namespace DefaultCollection;
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator
+class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator, EntityInterface
 {
     /**
      * array with entities
      *
-     * @var AbstractEntity[]
+     * @var EntityInterface[]
      */
     protected $entities = array();
 
@@ -34,7 +34,7 @@ class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator
     /**
      * returns current object
      *
-     * @return AbstractEntity
+     * @return EntityInterface
      */
     public function current()
     {
@@ -46,7 +46,7 @@ class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator
     /**
      * improve the pointer
      *
-     * @return AbstractEntity|false
+     * @return EntityInterface|false
      */
     public function next()
     {
@@ -72,7 +72,7 @@ class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator
     {
         $bIsValid = false;
         if (null !== $this->entities) {
-            $sKey = key($this->entities);
+            $sKey     = key($this->entities);
             $bIsValid = isset($sKey);
         }
 
@@ -82,7 +82,7 @@ class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator
     /**
      * return the first element in collection
      *
-     * @return AbstractEntity|false
+     * @return EntityInterface|false
      */
     public function rewind()
     {
@@ -92,7 +92,7 @@ class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator
     /**
      * return the last element in collection
      *
-     * @return AbstractEntity|false
+     * @return EntityInterface|false
      */
     public function end()
     {
@@ -103,6 +103,7 @@ class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator
      * check if the given offset exists
      *
      * @param string|int $mOffset Offset
+     *
      * @return bool
      */
     public function offsetExists($mOffset)
@@ -114,7 +115,8 @@ class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator
      * return the entity with the given offset
      *
      * @param string|int $mOffset Offset
-     * @return AbstractEntity
+     *
+     * @return EntityInterface
      */
     public function offsetGet($mOffset)
     {
@@ -124,14 +126,14 @@ class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator
     /**
      * set the entity by the given offset
      *
-     * @param string|int     $mOffset Offset
-     * @param AbstractEntity $oEntity ProxyServer
+     * @param string|int      $mOffset Offset
+     * @param EntityInterface $oEntity ProxyServer
      *
      * @throws \InvalidArgumentException
      */
     public function offsetSet($mOffset, $oEntity)
     {
-        if (false === ($oEntity instanceof AbstractEntity)) {
+        if (false === ($oEntity instanceof EntityInterface)) {
             throw new \InvalidArgumentException('Entity is no instance of AbstractEntity');
         }
         if (null === $mOffset) {
@@ -145,9 +147,9 @@ class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator
     /**
      * add a entity to the collection
      *
-     * @param AbstractEntity $oEntity
+     * @param EntityInterface $oEntity
      */
-    public function add(AbstractEntity $oEntity)
+    public function add(EntityInterface $oEntity)
     {
         $this->entities[] = $oEntity;
     }
@@ -206,5 +208,21 @@ class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator
         $this->entities = array_values($this->entities);
 
         return $this;
+    }
+
+    /**
+     * return this collection as array
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        $aReturn = array();
+
+        foreach ($this->entities as $sKey => $oEntity) {
+            $aReturn[$sKey] = $oEntity->toArray();
+        }
+
+        return $aReturn;
     }
 }
