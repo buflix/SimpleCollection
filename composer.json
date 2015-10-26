@@ -1,6 +1,6 @@
 {
-  "name": "DefaultCollection",
-  "description": "",
+  "name": "hanibal/simple-collection",
+  "description": "simple package for abstract collection with entities",
   "type": "entity-management",
   "license": "MIT",
   "keywords": [
@@ -13,11 +13,11 @@
     }
   ],
   "require": {
-    "php":                               "5.*"
+    "php": ">=5.4"
   },
   "autoload": {
     "psr-0": {
-      "DefaultCollection": "src/"
+      "SimpleCollection": "src/"
     }
   }
 }
