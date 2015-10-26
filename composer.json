@@ -1,0 +1,23 @@
+{
+  "name": "DefaultCollection",
+  "description": "",
+  "type": "entity-management",
+  "license": "MIT",
+  "keywords": [
+    "EntityCollection"
+  ],
+  "authors": [
+    {
+      "name": "Felix Buchheim",
+      "email": "hanibal4nothing@gmail.com"
+    }
+  ],
+  "require": {
+    "php":                               "5.*"
+  },
+  "autoload": {
+    "psr-0": {
+      "DefaultCollection": "src/"
+    }
+  }
+}
