@@ -211,6 +211,16 @@ class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator,
     }
 
     /**
+     * return if the collection is empty
+     *
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return true === empty($this->entities);
+    }
+
+    /**
      * return this collection as array
      *
      * @return array
