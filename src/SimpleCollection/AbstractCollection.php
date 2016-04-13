@@ -148,10 +148,14 @@ class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator,
      * add a entity to the collection
      *
      * @param EntityInterface $oEntity
+     *
+     * @return $this
      */
     public function add(EntityInterface $oEntity)
     {
         $this->entities[] = $oEntity;
+
+        return $this;
     }
 
     /**
@@ -208,6 +212,16 @@ class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator,
         $this->entities = array_values($this->entities);
 
         return $this;
+    }
+
+    /**
+     * return if the collection is empty
+     *
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return true === empty($this->entities);
     }
 
     /**
