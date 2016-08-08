@@ -7,8 +7,9 @@ namespace SimpleCollection;
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator, EntityInterface
+abstract class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator, EntityInterface
 {
+
     /**
      * array with entities
      *
@@ -138,24 +139,9 @@ class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator,
         }
         if (null === $mOffset) {
             $this->entities[] = $oEntity;
-        }
-        else {
+        } else {
             $this->entities[$mOffset] = $oEntity;
         }
-    }
-
-    /**
-     * add a entity to the collection
-     *
-     * @param EntityInterface $oEntity
-     *
-     * @return $this
-     */
-    public function add(EntityInterface $oEntity)
-    {
-        $this->entities[] = $oEntity;
-
-        return $this;
     }
 
     /**
@@ -181,7 +167,7 @@ class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator,
     }
 
     /**
-     * seek the pointer the the offset
+     * seek the pointer to the offset
      *
      * @param int|string $iOffset Seek position
      *
@@ -200,18 +186,6 @@ class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator,
         if (false === $this->valid()) {
             throw new \OutOfBoundsException('Invalid seek position');
         }
-    }
-
-    /**
-     * reset the collection keys
-     *
-     * @return $this
-     */
-    public function resetKeys()
-    {
-        $this->entities = array_values($this->entities);
-
-        return $this;
     }
 
     /**
