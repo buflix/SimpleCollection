@@ -7,51 +7,46 @@ namespace SimpleCollection;
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-abstract class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator, EntityInterface
+abstract class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator
 {
 
     /**
-     * array with entities
+     * array with values
      *
-     * @var EntityInterface[]
+     * @var array
      */
-    protected $entities = array();
+    protected $values = array();
 
     /**
      * AbstractCollection constructor
      *
-     * set the entities
-     * use the add to check the type
-     *
-     * @param array $aEntities
+     * @param array $aValues
      */
-    public function __construct(array $aEntities = array())
+    public function __construct(array $aValues = array())
     {
-        foreach ($aEntities as $sKey => $oEntity) {
-            $this->offsetSet($sKey, $oEntity);
-        }
+        $this->values = $aValues;
     }
 
     /**
-     * returns current object
+     * returns current value
      *
-     * @return EntityInterface
+     * @return mixed
      */
     public function current()
     {
-        $sKey = key($this->entities);
+        $sKey = key($this->values);
 
-        return (true === isset($this->entities[$sKey])) ? $this->entities[$sKey] : null;
+        return (true === isset($this->values[$sKey])) ? $this->values[$sKey] : null;
     }
 
     /**
      * improve the pointer
      *
-     * @return EntityInterface|false
+     * @return mixed|false
      */
     public function next()
     {
-        return next($this->entities);
+        return next($this->values);
     }
 
     /**
@@ -61,19 +56,19 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
      */
     public function key()
     {
-        return key($this->entities);
+        return key($this->values);
     }
 
     /**
-     * check if the the current object is set
+     * check if the the current value is set
      *
      * @return bool True if set, otherwise false
      */
     public function valid()
     {
         $bIsValid = false;
-        if (null !== $this->entities) {
-            $sKey     = key($this->entities);
+        if (null !== $this->values) {
+            $sKey     = key($this->values);
             $bIsValid = isset($sKey);
         }
 
@@ -83,21 +78,21 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     /**
      * return the first element in collection
      *
-     * @return EntityInterface|false
+     * @return mixed|false
      */
     public function rewind()
     {
-        return reset($this->entities);
+        return reset($this->values);
     }
 
     /**
      * return the last element in collection
      *
-     * @return EntityInterface|false
+     * @return mixed|false
      */
     public function end()
     {
-        return end($this->entities);
+        return end($this->values);
     }
 
     /**
@@ -109,43 +104,52 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
      */
     public function offsetExists($mOffset)
     {
-        return isset($this->entities[$mOffset]);
+        return isset($this->values[$mOffset]);
     }
 
     /**
-     * return the entity with the given offset
+     * return the value with the given offset
      *
      * @param string|int $mOffset Offset
      *
-     * @return EntityInterface
+     * @return mixed
      */
     public function offsetGet($mOffset)
     {
-        return $this->entities[$mOffset];
+        return $this->values[$mOffset];
     }
 
     /**
-     * set the entity by the given offset
+     * Return the value with the given offset, if is not set return the default
      *
-     * @param string|int      $mOffset Offset
-     * @param EntityInterface $oEntity ProxyServer
+     * @param mixed $mOffset
+     * @param mixed $mDefault
+     *
+     * @return mixed
+     */
+    public function get($mOffset, $mDefault = null)
+    {
+        return (true === isset($this->values[$mOffset])) ? $this->values[$mOffset] : $mDefault;
+    }
+
+    /**
+     * set the value by the given offset
+     *
+     * @param string|int $mOffset Offset
+     * @param mixed      $mValue  ProxyServer
      *
      * @throws \InvalidArgumentException
      */
-    public function offsetSet($mOffset, $oEntity)
+    public function offsetSet($mOffset, $mValue)
     {
-        if (false === ($oEntity instanceof EntityInterface)) {
-            throw new \InvalidArgumentException('Entity is no instance of AbstractEntity');
+        if (false === isset($mOffset)) {
+            throw new \InvalidArgumentException('Offset can not be null');
         }
-        if (null === $mOffset) {
-            $this->entities[] = $oEntity;
-        } else {
-            $this->entities[$mOffset] = $oEntity;
-        }
+        $this->values[$mOffset] = $mValue;
     }
 
     /**
-     * unset the entity by the offset
+     * unset the value by the offset
      *
      * @param string|int $mOffset Offset
      *
@@ -153,7 +157,7 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
      */
     public function offsetUnset($mOffset)
     {
-        unset($this->entities[$mOffset]);
+        unset($this->values[$mOffset]);
     }
 
     /**
@@ -163,7 +167,7 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
      */
     public function count()
     {
-        return count($this->entities);
+        return count($this->values);
     }
 
     /**
@@ -195,22 +199,28 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
      */
     public function isEmpty()
     {
-        return true === empty($this->entities);
+        return true === empty($this->values);
     }
 
     /**
-     * return this collection as array
+     * Return all values
      *
      * @return array
      */
-    public function toArray()
+    public function getAll()
     {
-        $aReturn = array();
+        return $this->values;
+    }
 
-        foreach ($this->entities as $sKey => $oEntity) {
-            $aReturn[$sKey] = $oEntity->toArray();
-        }
+    /**
+     * reset the collection keys
+     *
+     * @return $this
+     */
+    public function resetKeys()
+    {
+        $this->values = array_values($this->values);
 
-        return $aReturn;
+        return $this;
     }
 }

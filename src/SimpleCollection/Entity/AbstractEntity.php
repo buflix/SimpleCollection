@@ -1,5 +1,5 @@
 <?php
-namespace SimpleCollection;
+namespace SimpleCollection\Entity;
 
 /**
  * abstract entity
@@ -9,6 +9,7 @@ namespace SimpleCollection;
  */
 abstract class AbstractEntity implements EntityInterface
 {
+
     /**
      * return this entity as array
      *
@@ -22,8 +23,7 @@ abstract class AbstractEntity implements EntityInterface
         foreach (get_object_vars($this) as $sKey => $mValue) {
             if ($mValue instanceof EntityInterface or true === method_exists($mValue, 'toArray')) {
                 $aReturn[$sKey] = $mValue->toArray();
-            }
-            else {
+            } else {
                 $aReturn[$sKey] = $mValue;
             }
         }

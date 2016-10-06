@@ -3,43 +3,35 @@
 namespace SimpleCollection;
 
 /**
- * Array collection
+ * Collection, will reset value keys on construct
  *
- * @package SimpleCollection
- * @author  Felix Buchheim <hanibal4nothing@gmail.com>
+ * @copyright Felix Buchheim
+ * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
 class ArrayCollection extends AbstractCollection
 {
 
     /**
-     * int indexed array with entities
+     * ArrayCollection constructor.
      *
-     * @var EntityInterface[]
+     * @param array $aValues
      */
-    protected $entities = array();
+    public function __construct(array $aValues)
+    {
+        parent::__construct($aValues);
+        $this->resetKeys();
+    }
 
     /**
      * add a entity to the collection
      *
-     * @param EntityInterface $oEntity
+     * @param mixed $mValue
      *
      * @return $this
      */
-    public function add(EntityInterface $oEntity)
+    public function add($mValue)
     {
-        $this->entities[] = $oEntity;
-
-        return $this;
-    }
-
-    /**
-     * reset the collection keys
-     *
-     * @return $this
-     */
-    public function resetKeys()
-    {
-        $this->entities = array_values($this->entities);
+        $this->values[] = $mValue;
 
         return $this;
     }

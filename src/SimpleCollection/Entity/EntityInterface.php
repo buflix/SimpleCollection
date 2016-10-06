@@ -1,5 +1,5 @@
 <?php
-namespace SimpleCollection;
+namespace SimpleCollection\Entity;
 
 /**
  * entity Interface
