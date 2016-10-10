@@ -11,6 +11,16 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
 {
 
     /**
+     * Flag if the value no existing
+     *
+     * To be able to distinguish existing values such as "null" or "false" from the information that the requested
+     * value is not present
+     *
+     * @var string
+     */
+    const NOT_SET_FLAG = '<|__NOT_SET__|>';
+
+    /**
      * array with values
      *
      * @var array
@@ -50,6 +60,40 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     }
 
     /**
+     * Like next, but return Not_Set_Flag if there are no next value instead of false
+     *
+     * @return mixed
+     */
+    public function scNext()
+    {
+        $mValue = $this->next();
+
+        return (false === $mValue and false === $this->valid()) ? self::NOT_SET_FLAG : $mValue;
+    }
+
+    /**
+     * rewind the pointer for one position
+     *
+     * @return mixed|false
+     */
+    public function prev()
+    {
+        return prev($this->values);
+    }
+
+    /**
+     * rewind the pointer for one position
+     *
+     * @return mixed|false
+     */
+    public function scPrev()
+    {
+        $mValue = $this->prev();
+
+        return (false === $mValue and false === $this->valid()) ? self::NOT_SET_FLAG : $mValue;
+    }
+
+    /**
      * return the current key
      *
      * @return int
@@ -68,7 +112,7 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     {
         $bIsValid = false;
         if (null !== $this->values) {
-            $sKey     = key($this->values);
+            $sKey     = $this->key();
             $bIsValid = isset($sKey);
         }
 
@@ -133,19 +177,36 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     }
 
     /**
+     * Set all values
+     *
+     * @param array $aValues
+     *
+     * @return $this
+     */
+    public function set(array $aValues)
+    {
+        $this->values = $aValues;
+
+        return $this;
+    }
+
+    /**
      * set the value by the given offset
      *
      * @param string|int $mOffset Offset
      * @param mixed      $mValue  ProxyServer
      *
+     * @return $this
      * @throws \InvalidArgumentException
      */
     public function offsetSet($mOffset, $mValue)
     {
-        if (false === isset($mOffset)) {
-            throw new \InvalidArgumentException('Offset can not be null');
+        if (false === is_string($mOffset) and false === is_integer($mOffset)) {
+            throw new \InvalidArgumentException('Invalid offset given: ' . gettype($mOffset));
         }
         $this->values[$mOffset] = $mValue;
+
+        return $this;
     }
 
     /**
@@ -153,11 +214,13 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
      *
      * @param string|int $mOffset Offset
      *
-     * @return void
+     * @return $this
      */
     public function offsetUnset($mOffset)
     {
         unset($this->values[$mOffset]);
+
+        return $this;
     }
 
     /**
@@ -171,10 +234,11 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     }
 
     /**
-     * seek the pointer to the offset
+     * seek the pointer to the offset position
      *
-     * @param int|string $iOffset Seek position
+     * @param int $iOffset Seek position
      *
+     * @return mixed
      * @throws \OutOfBoundsException
      */
     public function seek($iOffset)
@@ -182,14 +246,43 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
         $this->rewind();
         $iPosition = 0;
 
-        while ($iPosition < $iOffset and $this->valid()) {
+        while ($iPosition < $iOffset and true === $this->valid()) {
             $this->next();
             $iPosition++;
         }
 
         if (false === $this->valid()) {
-            throw new \OutOfBoundsException('Invalid seek position');
+            throw new \OutOfBoundsException('Invalid seek position: ' . $iOffset);
         }
+
+        return $this->current();
+    }
+
+    /**
+     * Try to seek to given offset
+     *
+     * @param mixed $mKey
+     * @param bool  $bStrictMode
+     *
+     * @return mixed
+     */
+    public function seekToKey($mKey, $bStrictMode = false)
+    {
+        $this->rewind();
+        if ($bStrictMode === true) {
+            while (true === $this->valid() and $mKey !== $this->key()) {
+                $this->next();
+            }
+        } else {
+            while (true === $this->valid() and $mKey != $this->key()) {
+                $this->next();
+            }
+        }
+        if (false === $this->valid()) {
+            throw new \OutOfBoundsException('Invalid seek position: ' . $mKey);
+        }
+
+        return $this->current();
     }
 
     /**

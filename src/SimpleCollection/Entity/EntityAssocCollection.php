@@ -16,8 +16,9 @@ class EntityAssocCollection extends AbstractEntityCollection
      *
      * @param AssocEntityInterface[] $aEntities
      */
-    public function __construct(array $aEntities)
+    public function __construct(array $aEntities = array())
     {
+        $this->checkClasses($aEntities);
         parent::__construct($this->indexEntities($aEntities));
     }
 
@@ -28,9 +29,36 @@ class EntityAssocCollection extends AbstractEntityCollection
      *
      * @return bool
      */
-    public function entityExist(AssocEntityInterface $oEntity)
+    public function entityExists(AssocEntityInterface $oEntity)
     {
         return $this->offsetExists($oEntity->getCollectionIndex());
+    }
+
+    /**
+     * Set indexed entities to collection
+     *
+     * @param AssocEntityInterface[] $aEntities
+     *
+     * @return $this
+     */
+    public function set(array $aEntities)
+    {
+        return parent::set($this->indexEntities($aEntities));
+    }
+
+    /**
+     * Add Entity to collection
+     *
+     * @param AssocEntityInterface $oEntity
+     *
+     * @return $this
+     */
+    public function add($oEntity)
+    {
+        $this->checkClass($oEntity);
+        $this->values[$oEntity->getCollectionIndex()] = $oEntity;
+
+        return $this;
     }
 
     /**
@@ -48,5 +76,24 @@ class EntityAssocCollection extends AbstractEntityCollection
         }
 
         return $aIndexEntities;
+    }
+
+    /**
+     * Check class
+     *
+     * @param AssocEntityInterface $oEntity
+     *
+     * @return $this
+     */
+    protected function checkClass($oEntity)
+    {
+        if (false === $oEntity instanceof AssocEntityInterface) {
+            throw new \InvalidArgumentException(
+                'Expect entity of class \SimpleCollection\Entity\AssocEntityInterface. '
+                . get_class($oEntity) . ' given'
+            );
+        }
+
+        return $this;
     }
 }

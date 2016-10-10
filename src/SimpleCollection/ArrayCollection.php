@@ -16,7 +16,7 @@ class ArrayCollection extends AbstractCollection
      *
      * @param array $aValues
      */
-    public function __construct(array $aValues)
+    public function __construct(array $aValues = array())
     {
         parent::__construct($aValues);
         $this->resetKeys();
@@ -34,5 +34,19 @@ class ArrayCollection extends AbstractCollection
         $this->values[] = $mValue;
 
         return $this;
+    }
+
+    /**
+     * Set all values and reset keys
+     *
+     * @param array $aValues
+     *
+     * @return $this
+     */
+    public function set(array $aValues)
+    {
+        parent::set($aValues);
+
+        return $this->resetKeys();
     }
 }

@@ -35,4 +35,18 @@ class EntityArrayCollection extends AbstractEntityCollection
 
         return $this;
     }
+
+    /**
+     * Set all values and reset keys
+     *
+     * @param EntityInterface[] $aValues
+     *
+     * @return $this
+     */
+    public function set(array $aValues)
+    {
+        parent::set($aValues);
+
+        return $this->resetKeys();
+    }
 }
