@@ -16,24 +16,10 @@ class EntityArrayCollection extends AbstractEntityCollection
      *
      * @param array|EntityInterface[] $aEntities
      */
-    public function __construct($aEntities)
+    public function __construct($aEntities = array())
     {
         parent::__construct($aEntities);
         $this->resetKeys();
-    }
-
-    /**
-     * add a entity to the collection
-     *
-     * @param EntityInterface $oEntity
-     *
-     * @return $this
-     */
-    public function add(EntityInterface $oEntity)
-    {
-        $this->values[] = $oEntity;
-
-        return $this;
     }
 
     /**

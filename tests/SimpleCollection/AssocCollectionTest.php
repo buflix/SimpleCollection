@@ -36,7 +36,7 @@ class AssocCollectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testEmptyConstructor()
     {
-        $this->assertEmpty($this->object);
+        $this->assertCount(0, $this->object);
     }
 
     /**
@@ -276,7 +276,7 @@ class AssocCollectionTest extends \PHPUnit_Framework_TestCase
     /**
      * Test seek to given key
      */
-    public function seekToKey()
+    public function testSeekToKey()
     {
         $this->object->set(array('a', 'b', 'c', 'd'));
 
@@ -305,12 +305,17 @@ class AssocCollectionTest extends \PHPUnit_Framework_TestCase
      * Test to throw an exception if seek is bigger then offset
      *
      * @expectedException  \OutOfBoundsException
-     * @expectedExceptionMessage Invalid seek position: 5
+     *
+     * @dataProvider outOfBoundsProvider
+     *
+     * @param array $aValues
+     * @param mixed $mSeekKey
+     * @param bool  $bStrict
      */
-    public function testOutOfBoundsSeekToKeyException()
+    public function testOutOfBoundsSeekToKeyException(array $aValues, $mSeekKey, $bStrict)
     {
-        $this->object->set(array(1, 2, 3, 4, 5, 'x'));
-        $this->object->seekToKey('5', true);
+        $this->object->set($aValues);
+        $this->object->seekToKey($mSeekKey, $bStrict);
     }
 
     /**
@@ -353,6 +358,28 @@ class AssocCollectionTest extends \PHPUnit_Framework_TestCase
         $aTestCases['float']  = array('mOffset' => 2.5);
         $aTestCases['bool']   = array('mOffset' => false);
         $aTestCases['object'] = array('mOffset' => new \stdClass());
+
+        return $aTestCases;
+    }
+
+    /**
+     * Provider for testOutOfBoundsSeekToKeyException
+     *
+     * @return array
+     */
+    public function outOfBoundsProvider()
+    {
+        $aTestCases              = array();
+        $aTestCases['notStrict'] = array(
+            'aValues'  => array(1, 2, 3, 4),
+            'mSeekKey' => 4,
+            'bStrict'  => false
+        );
+        $aTestCases['strict']    = array(
+            'aValues'  => array(1, 2, 3, 4),
+            'mSeekKey' => '1',
+            'bStrict'  => true
+        );
 
         return $aTestCases;
     }

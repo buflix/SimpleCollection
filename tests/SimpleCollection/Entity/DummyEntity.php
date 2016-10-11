@@ -22,6 +22,13 @@ class DummyEntity extends AbstractEntity implements AssocEntityInterface
     protected $index;
 
     /**
+     * Child entity
+     *
+     * @var DummyEntity
+     */
+    protected $child;
+
+    /**
      * DummyEntity constructor.
      *
      * @param $mIndex
@@ -63,4 +70,27 @@ class DummyEntity extends AbstractEntity implements AssocEntityInterface
         return $this->getIndex();
     }
 
+    /**
+     * Return Child
+     *
+     * @return DummyEntity
+     */
+    public function getChild()
+    {
+        return $this->child;
+    }
+
+    /**
+     * Set Child to this object
+     *
+     * @param DummyEntity $child
+     *
+     * @return $this
+     */
+    public function setChild(DummyEntity $child)
+    {
+        $this->child = $child;
+
+        return $this;
+    }
 }

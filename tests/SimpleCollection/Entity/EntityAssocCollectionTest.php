@@ -34,7 +34,7 @@ class EntityAssocCollectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstruct()
     {
-        $this->assertEmpty($this->object);
+        $this->assertCount(0, $this->object);
 
         $this->object = new EntityAssocCollection(
             array(
@@ -67,7 +67,7 @@ class EntityAssocCollectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testSet()
     {
-        $this->assertEmpty($this->object);
+        $this->assertCount(0, $this->object);
 
         $this->object->set(array(
             new DummyEntity('abc'),
@@ -86,7 +86,7 @@ class EntityAssocCollectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testAdd()
     {
-        $this->assertEmpty($this->object);
+        $this->assertCount(0, $this->object);
 
         $this->object->add(new DummyEntity(12))
             ->add(new DummyEntity('x'));
@@ -109,15 +109,38 @@ class EntityAssocCollectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testToArray()
     {
-        $this->object->add(new DummyEntity('42'))
-            ->add(new DummyEntity('xxXXxx'));
+        $oFirstEntity  = new DummyEntity('42');
+        $oSecondEntity = new DummyEntity('xxXXxx');
+        $this->object->add($oFirstEntity)
+            ->add($oSecondEntity);
 
         $this->assertEquals(
             array(
-                '42'     => array('index' => '42'),
-                'xxXXxx' => array('index' => 'xxXXxx')
+                '42'     => array('index' => '42', 'child' => null),
+                'xxXXxx' => array('index' => 'xxXXxx', 'child' => null)
             ),
             $this->object->toArray()
         );
+
+        $this->object->get('42')->setChild(new DummyEntity(44));
+
+        $this->assertEquals(
+            array(
+                '42'     => array('index' => '42', 'child' => array('index' => 44, 'child' => null)),
+                'xxXXxx' => array('index' => 'xxXXxx', 'child' => null)
+            ),
+            $this->object->toArray()
+        );
+    }
+
+    /**
+     * Test check class exception
+     *
+     * @expectedException \InvalidArgumentException
+     */
+    public function testCheckClassException()
+    {
+        $oMock = $this->getMock('SimpleCollection\Entity\EntityInterface');
+        $this->object->add($oMock);
     }
 }

@@ -88,10 +88,7 @@ class EntityAssocCollection extends AbstractEntityCollection
     protected function checkClass($oEntity)
     {
         if (false === $oEntity instanceof AssocEntityInterface) {
-            throw new \InvalidArgumentException(
-                'Expect entity of class \SimpleCollection\Entity\AssocEntityInterface. '
-                . get_class($oEntity) . ' given'
-            );
+            throw new \InvalidArgumentException('Expect entity of class \SimpleCollection\Entity\AssocEntityInterface');
         }
 
         return $this;

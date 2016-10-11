@@ -34,7 +34,7 @@ class ArrayCollectionTest extends AssocCollectionTest
      */
     public function testAdd()
     {
-        $this->assertEmpty($this->object);
+        $this->assertCount(0, $this->object);
         $this->object->add(2);
         $this->assertNotEmpty($this->object);
         $this->object->add(42);

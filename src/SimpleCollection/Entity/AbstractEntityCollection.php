@@ -117,9 +117,7 @@ abstract class AbstractEntityCollection extends AbstractCollection implements En
     protected function checkClass($oEntity)
     {
         if (false === $oEntity instanceof EntityInterface) {
-            throw new \InvalidArgumentException(
-                'Expect entity of class \SimpleCollection\Entity\EntityInterface. ' . get_class($oEntity) . ' given'
-            );
+            throw new \InvalidArgumentException('Expect entity of class \SimpleCollection\Entity\EntityInterface');
         }
 
         return $this;
