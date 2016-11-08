@@ -266,7 +266,7 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
      *
      * @return mixed
      */
-    public function seekToKey($mKey, $bStrictMode = false)
+    public function seekToKey($mKey, $bStrictMode = true)
     {
         $this->rewind();
         if ($bStrictMode === true) {
@@ -315,5 +315,98 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
         $this->values = array_values($this->values);
 
         return $this;
+    }
+
+    /**
+     * Clear Collection
+     *
+     * @return $this
+     */
+    public function clear()
+    {
+        $this->values = array();
+        $this->rewind();
+
+        return $this;
+    }
+
+    /**
+     * Return all used keys
+     *
+     * @return array
+     */
+    public function getKeys()
+    {
+        return array_keys($this->values);
+    }
+
+    /**
+     * Filters the current values and return a new collection
+     *
+     * @param \Closure $cClosure
+     *
+     * @return AbstractCollection
+     */
+    public function filter(\Closure $cClosure)
+    {
+        $sClassName      = get_class($this);
+        $aFilteredValues = array();
+        foreach ($this->values as $sKey => $mValue) {
+            if (true === $cClosure($mValue, $sKey)) {
+                $aFilteredValues[$sKey] = $mValue;
+            }
+        }
+
+        return new $sClassName($aFilteredValues);
+    }
+
+    /**
+     * Use a function on all values of the collection, and set the result as new values for the key
+     *
+     * @param \Closure $cClosure
+     *
+     * @return $this
+     */
+    public function forAll(\Closure $cClosure)
+    {
+        foreach ($this->values as $mKey => $mValue) {
+            $this->offsetSet($mKey, $cClosure($mValue, $mKey));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Slice elements and create a new instance
+     *
+     * @param mixed $mStartKey
+     * @param bool  $bStrict
+     * @param int   $iLength
+     *
+     * @return AbstractCollection
+     */
+    public function sliceByKey($mStartKey, $bStrict = true, $iLength = PHP_INT_MAX)
+    {
+        $aSlice = array();
+        try {
+            $this->seekToKey($mStartKey, $bStrict);
+
+            if ($iLength > 0) {
+                $aSlice[$this->key()] = $this->current();
+                $iLength--;
+                $this->next();
+            }
+
+            while ($iLength > 0 and true === $this->valid()) {
+                $aSlice[$this->key()] = $this->current();
+                $iLength--;
+                $this->next();
+            }
+        } catch (\OutOfBoundsException $e) {
+            //do nothing if key not exists
+        }
+        $sClassName = get_class($this);
+
+        return new $sClassName($aSlice);
     }
 }

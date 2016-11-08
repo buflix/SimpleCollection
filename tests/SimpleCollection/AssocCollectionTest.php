@@ -3,7 +3,6 @@
 namespace Tests\SimpleCollection;
 
 use SimpleCollection\AbstractCollection;
-use SimpleCollection\ArrayCollection;
 use SimpleCollection\AssocCollection;
 
 /**
@@ -37,37 +36,6 @@ class AssocCollectionTest extends \PHPUnit_Framework_TestCase
     public function testEmptyConstructor()
     {
         $this->assertCount(0, $this->object);
-    }
-
-    /**
-     * TestConstructor
-     *
-     * @param array $aValues
-     * @param int   $iAssertCount
-     *
-     * @dataProvider constructProvider
-     */
-    public function testConstruct(array $aValues, $iAssertCount)
-    {
-        $this->object = new ArrayCollection($aValues);
-        $this->assertCount($iAssertCount, $this->object);
-    }
-
-    /**
-     * Check to reset keys on construct
-     *
-     * @param array $aValues
-     * @param int   $iValueCount
-     *
-     * @dataProvider constructProvider
-     */
-    public function testResetKeys(array $aValues, $iValueCount)
-    {
-        $this->object = new ArrayCollection($aValues);
-        for ($i = 0; $i < $iValueCount; $i++) {
-            $this->assertTrue($this->object->offsetExists($i));
-        }
-        $this->assertFalse($this->object->offsetExists($iValueCount + 1));
     }
 
     /**
@@ -280,13 +248,17 @@ class AssocCollectionTest extends \PHPUnit_Framework_TestCase
     {
         $this->object->set(array('a', 'b', 'c', 'd'));
 
+        $this->assertEquals('a', $this->object->seekToKey(0));
         $this->assertEquals('b', $this->object->seekToKey(1));
-        $this->assertEquals('b', $this->object->seekToKey('1'));
+        $this->assertEquals('b', $this->object->seekToKey('1', false));
         $this->assertEquals('a', $this->object->prev());
 
         $this->assertEquals('d', $this->object->seekToKey(3));
-        $this->assertEquals('d', $this->object->seekToKey('3'));
+        $this->assertEquals('d', $this->object->seekToKey('3', false));
         $this->assertEquals('c', $this->object->prev());
+
+        //!!!! this is the reason to use strict ===
+        $this->assertEquals('a', $this->object->seekToKey('blafasel', false));
     }
 
     /**
@@ -346,6 +318,256 @@ class AssocCollectionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test to clear the collection
+     */
+    public function testClear()
+    {
+        $this->object->set(array(1, 2, 3));
+        $this->assertCount(3, $this->object);
+        $this->assertEquals(2, $this->object->seek(1));
+
+        $this->assertInstanceOf(get_class($this->object), $this->object->clear());
+
+        $this->assertCount(0, $this->object);
+        $this->object->offsetSet(0, 42);
+        $this->assertEquals(42, $this->object->current());
+    }
+
+    /**
+     * Test to get keys from collections
+     */
+    public function testGetKeys()
+    {
+        $this->object->set(array('x' => 2.5, '3' => 'bla', 0 => 2));
+        $this->assertEquals(
+            array('x', '3', 0),
+            $this->object->getKeys()
+        );
+    }
+
+    /**
+     * @param array    $aValues
+     * @param \Closure $cClosure
+     * @param array    $aExpectedResult
+     *
+     * @dataProvider filterProvider
+     */
+    public function testFilter(array $aValues, \Closure $cClosure, array $aExpectedResult)
+    {
+        $this->object->set($aValues);
+        $oResult = $this->object->filter($cClosure);
+        $this->assertCount(count($aValues), $this->object);
+        $this->assertInstanceOf(get_class($this->object), $oResult);
+
+        foreach ($aExpectedResult as $sKey => $mValue) {
+            $this->assertTrue($oResult->offsetExists($sKey));
+            $this->assertEquals($mValue, $oResult->offsetGet($sKey));
+        }
+        $this->assertCount(count($aExpectedResult), $oResult);
+    }
+
+    /**
+     * Test to use an function for allElements
+     */
+    public function testForAll()
+    {
+        $this->object->set(array(1, 2, 3, 4, 5, 6));
+        $cDecreaseAllValues    = function ($iValue) {
+            return $iValue - 1;
+        };
+        $cIncreaseModTwoValues = function ($iValue, $iKey) {
+            return (0 === $iKey % 2) ? $iValue + 1 : $iValue;
+        };
+
+        $this->object->forAll($cDecreaseAllValues);
+        $this->assertEquals(array(0, 1, 2, 3, 4, 5), $this->object->getAll());
+
+        $this->object->forAll($cIncreaseModTwoValues);
+        $this->assertEquals(array(1, 1, 3, 3, 5, 5), $this->object->getAll());
+    }
+
+    /**
+     * DataProvider for testFilter
+     *
+     * @return array
+     */
+    public function filterProvider()
+    {
+        $aTestCases = array();
+        $cModuloTwo = function ($value) {
+            return ($value % 2 === 0);
+        };
+
+        $cKeyIsString = function ($value, $key) {
+            return (is_string($key));
+        };
+
+        $aTestCases['oneElementNullFiltered'] = array(
+            'aValues'         => array(1),
+            'cClosure'        => $cModuloTwo,
+            'aExpectedResult' => array()
+        );
+
+        $aTestCases['oneElementOneFiltered'] = array(
+            'aValues'         => array(2),
+            'cClosure'        => $cModuloTwo,
+            'aExpectedResult' => array(2)
+        );
+
+        $aTestCases['oneIsString'] = array(
+            'aValues'         => array(1, 2, 'x' => 3),
+            'cClosure'        => $cKeyIsString,
+            'aExpectedResult' => array('x' => 3)
+        );
+
+        $aTestCases['allAreStrings'] = array(
+            'aValues'         => array('y' => 1, 'a' => 2, 'x' => 3),
+            'cClosure'        => $cKeyIsString,
+            'aExpectedResult' => array('y' => 1, 'a' => 2, 'x' => 3)
+        );
+
+        return $aTestCases;
+    }
+
+    /**
+     * Test to slice values and create a new collection with these
+     *
+     * @param array $aValues
+     * @param mixed $mKey
+     * @param bool  $bStrict
+     * @param int   $iLength
+     * @param array $aExpectedResult
+     *
+     * @dataProvider sliceByKeyProvider
+     */
+    public function testSliceByKey(array $aValues, $mKey, $bStrict, $iLength, array $aExpectedResult)
+    {
+        $this->object->set($aValues);
+        $oBackup            = clone $this->object;
+        $oResult = $this->object->sliceByKey($mKey, $bStrict, $iLength);
+
+        $this->assertEquals($oBackup, $this->object);
+        $this->assertInstanceOf(get_class($this->object), $oResult);
+        $this->assertEquals($aExpectedResult, $oResult->getAll());
+    }
+
+    /**
+     * Dataprovider for testSliceByKey
+     *
+     * @return array
+     */
+    public function sliceByKeyProvider()
+    {
+        $aTestCases = array();
+
+        $aTestCases['emptyCollection'] = array(
+            'aValues'         => array(),
+            'mKey'            => 0,
+            'bStrict'         => false,
+            'iLength'         => 1,
+            'aExpectedResult' => array()
+        );
+
+        $aTestCases['simpleSlice'] = array(
+            'aValues'         => array(0 => 1),
+            'mKey'            => 0,
+            'bStrict'         => false,
+            'iLength'         => 1,
+            'aExpectedResult' => array(0 => 1)
+        );
+
+        $aTestCases['keyNotExists'] = array(
+            'aValues'         => array(0 => 1),
+            'mKey'            => 3,
+            'bStrict'         => false,
+            'iLength'         => 1,
+            'aExpectedResult' => array()
+        );
+
+        $aTestCases['keyIsNull'] = array(
+            'aValues'         => array(1, 2, 3),
+            'mKey'            => null,
+            'bStrict'         => false,
+            'iLength'         => 1,
+            'aExpectedResult' => array(1)
+        );
+
+        $aTestCases['keyIsNull2'] = array(
+            'aValues'         => array(1, 2, 3),
+            'mKey'            => null,
+            'bStrict'         => false,
+            'iLength'         => 2,
+            'aExpectedResult' => array(1, 2)
+        );
+
+        $aTestCases['findWithStrict'] = array(
+            'aValues'         => array(1, 2, 3),
+            'mKey'            => 1,
+            'bStrict'         => true,
+            'iLength'         => 2,
+            'aExpectedResult' => array(1 => 2, 2 => 3)
+        );
+
+        $aTestCases['notFindWithStrict'] = array(
+            'aValues'         => array(1, 2, 3),
+            'mKey'            => '1',
+            'bStrict'         => true,
+            'iLength'         => 2,
+            'aExpectedResult' => array()
+        );
+
+        $aTestCases['findWithoutStrict'] = array(
+            'aValues'         => array(1, 2, 3),
+            'mKey'            => '1',
+            'bStrict'         => false,
+            'iLength'         => 2,
+            'aExpectedResult' => array(1 => 2, 2 => 3)
+        );
+
+        $aTestCases['sliceExample'] = array(
+            'aValues'         => array('a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5),
+            'mKey'            => 'b',
+            'bStrict'         => false,
+            'iLength'         => 2,
+            'aExpectedResult' => array('b' => 2, 'c' => 3)
+        );
+
+        $aTestCases['lengthOfNull'] = array(
+            'aValues'         => array('a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5),
+            'mKey'            => 'b',
+            'bStrict'         => false,
+            'iLength'         => 0,
+            'aExpectedResult' => array()
+        );
+
+        $aTestCases['lengthOfOne'] = array(
+            'aValues'         => array('a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5),
+            'mKey'            => 'b',
+            'bStrict'         => false,
+            'iLength'         => 1,
+            'aExpectedResult' => array('b' => 2)
+        );
+
+        $aTestCases['negativeLength'] = array(
+            'aValues'         => array('a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5),
+            'mKey'            => 'b',
+            'bStrict'         => false,
+            'iLength'         => -1,
+            'aExpectedResult' => array()
+        );
+
+        $aTestCases['maxLength'] = array(
+            'aValues'         => array('a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5),
+            'mKey'            => 'c',
+            'bStrict'         => false,
+            'iLength'         => PHP_INT_MAX,
+            'aExpectedResult' => array('c' => 3, 'd' => 4, 'e' => 5)
+        );
+
+        return $aTestCases;
+    }
+
+    /**
      * DataProvider for testOffsetSetException
      *
      * @return array
@@ -379,34 +601,6 @@ class AssocCollectionTest extends \PHPUnit_Framework_TestCase
             'aValues'  => array(1, 2, 3, 4),
             'mSeekKey' => '1',
             'bStrict'  => true
-        );
-
-        return $aTestCases;
-    }
-
-    /**
-     * DataProvider for testConstruct
-     *
-     * @return array
-     */
-    public function constructProvider()
-    {
-        $aTestCases                   = array();
-        $aTestCases['emptyArray']     = array(
-            'aValues'      => array(),
-            'iAssertCount' => 0
-        );
-        $aTestCases['oneValue']       = array(
-            'aValues'      => array(42),
-            'iAssertCount' => 1
-        );
-        $aTestCases['multipleValues'] = array(
-            'aValues'      => array(42, 'x', 'abc'),
-            'iAssertCount' => 3
-        );
-        $aTestCases['indexValues']    = array(
-            'aValues'      => array('a' => 42, 2 => 'x', '3' => 'abc'),
-            'iAssertCount' => 3
         );
 
         return $aTestCases;
