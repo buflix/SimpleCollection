@@ -1,13 +1,15 @@
 <?php
 namespace SimpleCollection;
 
+use SimpleCollection\Service\Pagination\PaginationCollectionInterface;
+
 /**
  * abstract collection
  *
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-abstract class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator
+abstract class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator, PaginationCollectionInterface
 {
 
     /**
@@ -265,6 +267,7 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
      * @param bool  $bStrictMode
      *
      * @return mixed
+     * @throws \OutOfBoundsException
      */
     public function seekToKey($mKey, $bStrictMode = true)
     {
