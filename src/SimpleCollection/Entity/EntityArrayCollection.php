@@ -14,24 +14,24 @@ class EntityArrayCollection extends AbstractEntityCollection
     /**
      * EntityArrayCollection constructor.
      *
-     * @param array|EntityInterface[] $aEntities
+     * @param array|EntityInterface[] $entities
      */
-    public function __construct($aEntities = array())
+    public function __construct($entities = array())
     {
-        parent::__construct($aEntities);
+        parent::__construct($entities);
         $this->resetKeys();
     }
 
     /**
      * Set all values and reset keys
      *
-     * @param EntityInterface[] $aValues
+     * @param EntityInterface[] $values
      *
      * @return $this
      */
-    public function set(array $aValues)
+    public function set(array $values)
     {
-        parent::set($aValues);
+        parent::set($values);
 
         return $this->resetKeys();
     }

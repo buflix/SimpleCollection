@@ -14,49 +14,49 @@ class EntityAssocCollection extends AbstractEntityCollection
     /**
      * EntityAssocCollection constructor.
      *
-     * @param AssocEntityInterface[] $aEntities
+     * @param AssocEntityInterface[] $entities
      */
-    public function __construct(array $aEntities = array())
+    public function __construct(array $entities = array())
     {
-        $this->checkClasses($aEntities);
-        parent::__construct($this->indexEntities($aEntities));
+        $this->checkClasses($entities);
+        parent::__construct($this->indexEntities($entities));
     }
 
     /**
      * Check if entity already exists
      *
-     * @param AssocEntityInterface $oEntity
+     * @param AssocEntityInterface $entity
      *
      * @return bool
      */
-    public function entityExists(AssocEntityInterface $oEntity)
+    public function entityExists(AssocEntityInterface $entity)
     {
-        return $this->offsetExists($oEntity->getCollectionIndex());
+        return $this->offsetExists($entity->getCollectionIndex());
     }
 
     /**
      * Set indexed entities to collection
      *
-     * @param AssocEntityInterface[] $aEntities
+     * @param AssocEntityInterface[] $entities
      *
      * @return $this
      */
-    public function set(array $aEntities)
+    public function set(array $entities)
     {
-        return parent::set($this->indexEntities($aEntities));
+        return parent::set($this->indexEntities($entities));
     }
 
     /**
      * Add Entity to collection
      *
-     * @param AssocEntityInterface $oEntity
+     * @param AssocEntityInterface $entity
      *
      * @return $this
      */
-    public function add($oEntity)
+    public function add($entity)
     {
-        $this->checkClass($oEntity);
-        $this->values[$oEntity->getCollectionIndex()] = $oEntity;
+        $this->checkClass($entity);
+        $this->values[$entity->getCollectionIndex()] = $entity;
 
         return $this;
     }
@@ -64,30 +64,30 @@ class EntityAssocCollection extends AbstractEntityCollection
     /**
      * Create index array
      *
-     * @param AssocEntityInterface[] $aEntities
+     * @param AssocEntityInterface[] $entities
      *
      * @return array
      */
-    protected function indexEntities(array $aEntities)
+    protected function indexEntities(array $entities)
     {
-        $aIndexEntities = array();
-        foreach ($aEntities as $oEntity) {
-            $aIndexEntities[$oEntity->getCollectionIndex()] = $oEntity;
+        $indexEntities = array();
+        foreach ($entities as $entity) {
+            $indexEntities[$entity->getCollectionIndex()] = $entity;
         }
 
-        return $aIndexEntities;
+        return $indexEntities;
     }
 
     /**
      * Check class
      *
-     * @param AssocEntityInterface $oEntity
+     * @param AssocEntityInterface $entity
      *
      * @return $this
      */
-    protected function checkClass($oEntity)
+    protected function checkClass($entity)
     {
-        if (false === $oEntity instanceof AssocEntityInterface) {
+        if (false === $entity instanceof AssocEntityInterface) {
             throw new \InvalidArgumentException('Expect entity of class \SimpleCollection\Entity\AssocEntityInterface');
         }
 

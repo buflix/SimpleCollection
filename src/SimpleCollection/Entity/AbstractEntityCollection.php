@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleCollection\Entity;
 
 use SimpleCollection\AbstractCollection;
@@ -18,43 +19,43 @@ abstract class AbstractEntityCollection extends AbstractCollection implements En
      * set the values
      * use the offsetSet to check the type
      *
-     * @param EntityInterface[] $aEntities
+     * @param EntityInterface[] $entities
      */
-    public function __construct(array $aEntities = array())
+    public function __construct(array $entities = array())
     {
-        $this->checkClasses($aEntities);
-        parent::__construct($aEntities);
+        $this->checkClasses($entities);
+        parent::__construct($entities);
     }
 
     /**
      * set the entity by the given offset
      *
-     * @param string|int      $mOffset Offset
-     * @param EntityInterface $oEntity ProxyServer
+     * @param string|int      $offset Offset
+     * @param EntityInterface $entity ProxyServer
      *
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function offsetSet($mOffset, $oEntity)
+    public function offsetSet($offset, $entity)
     {
-        $this->checkClass($oEntity);
+        $this->checkClass($entity);
 
-        return parent::offsetSet($mOffset, $oEntity);
+        return parent::offsetSet($offset, $entity);
     }
 
     /**
      * Set all entities
      *
-     * @param EntityInterface[] $aEntities
+     * @param EntityInterface[] $entities
      *
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function set(array $aEntities)
+    public function set(array $entities)
     {
-        $this->checkClasses($aEntities);
+        $this->checkClasses($entities);
 
-        return parent::set($aEntities);
+        return parent::set($entities);
     }
 
     /**
@@ -64,28 +65,28 @@ abstract class AbstractEntityCollection extends AbstractCollection implements En
      */
     public function toArray()
     {
-        $aReturn = array();
+        $return = array();
 
-        foreach ($this->values as $sKey => $oEntity) {
-            /* @var EntityInterface $oEntity */
-            $aReturn[$sKey] = $oEntity->toArray();
+        foreach ($this->values as $key => $entity) {
+            /* @var EntityInterface $entity */
+            $return[$key] = $entity->toArray();
         }
 
-        return $aReturn;
+        return $return;
     }
 
     /**
      * Check all classes of given array
      *
-     * @param EntityInterface[] $aEntities
+     * @param EntityInterface[] $entities
      *
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function checkClasses(array $aEntities)
+    public function checkClasses(array $entities)
     {
-        foreach ($aEntities as $oEntity) {
-            $this->checkClass($oEntity);
+        foreach ($entities as $entity) {
+            $this->checkClass($entity);
         }
 
         return $this;
@@ -94,14 +95,14 @@ abstract class AbstractEntityCollection extends AbstractCollection implements En
     /**
      * Add Entity to collection
      *
-     * @param EntityInterface $oEntity
+     * @param EntityInterface $entity
      *
      * @return $this
      */
-    public function add($oEntity)
+    public function add($entity)
     {
-        $this->checkClass($oEntity);
-        $this->values[] = $oEntity;
+        $this->checkClass($entity);
+        $this->values[] = $entity;
 
         return $this;
     }
@@ -109,14 +110,14 @@ abstract class AbstractEntityCollection extends AbstractCollection implements En
     /**
      * Check if the given object is class of EntityInterface
      *
-     * @param EntityInterface $oEntity
+     * @param EntityInterface $entity
      *
      * @return $this
      * @throws \InvalidArgumentException
      */
-    protected function checkClass($oEntity)
+    protected function checkClass($entity)
     {
-        if (false === $oEntity instanceof EntityInterface) {
+        if (false === $entity instanceof EntityInterface) {
             throw new \InvalidArgumentException('Expect entity of class \SimpleCollection\Entity\EntityInterface');
         }
 

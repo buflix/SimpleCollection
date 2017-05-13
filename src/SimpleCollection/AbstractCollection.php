@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleCollection;
 
 use SimpleCollection\Service\Pagination\PaginationCollectionInterface;
@@ -9,7 +10,7 @@ use SimpleCollection\Service\Pagination\PaginationCollectionInterface;
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-abstract class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator, PaginationCollectionInterface
+abstract class AbstractCollection implements \ArrayAccess, PaginationCollectionInterface
 {
 
     /**
@@ -32,11 +33,11 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     /**
      * AbstractCollection constructor
      *
-     * @param array $aValues
+     * @param array $values
      */
-    public function __construct(array $aValues = array())
+    public function __construct(array $values = array())
     {
-        $this->values = $aValues;
+        $this->values = $values;
     }
 
     /**
@@ -46,9 +47,9 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
      */
     public function current()
     {
-        $sKey = key($this->values);
+        $key = key($this->values);
 
-        return (true === isset($this->values[$sKey])) ? $this->values[$sKey] : null;
+        return (isset($this->values[$key])) ? $this->values[$key] : null;
     }
 
     /**
@@ -68,9 +69,9 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
      */
     public function scNext()
     {
-        $mValue = $this->next();
+        $value = $this->next();
 
-        return (false === $mValue and false === $this->valid()) ? self::NOT_SET_FLAG : $mValue;
+        return (false === $value && !$this->valid()) ? self::NOT_SET_FLAG : $value;
     }
 
     /**
@@ -90,9 +91,9 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
      */
     public function scPrev()
     {
-        $mValue = $this->prev();
+        $value = $this->prev();
 
-        return (false === $mValue and false === $this->valid()) ? self::NOT_SET_FLAG : $mValue;
+        return (false === $value && !$this->valid()) ? self::NOT_SET_FLAG : $value;
     }
 
     /**
@@ -112,13 +113,13 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
      */
     public function valid()
     {
-        $bIsValid = false;
-        if (null !== $this->values) {
-            $sKey     = $this->key();
-            $bIsValid = isset($sKey);
+        $isValid = false;
+        if (isset($this->values)) {
+            $key     = $this->key();
+            $isValid = isset($key);
         }
 
-        return $bIsValid;
+        return $isValid;
     }
 
     /**
@@ -144,50 +145,50 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     /**
      * check if the given offset exists
      *
-     * @param string|int $mOffset Offset
+     * @param string|int $offset Offset
      *
      * @return bool
      */
-    public function offsetExists($mOffset)
+    public function offsetExists($offset)
     {
-        return isset($this->values[$mOffset]);
+        return isset($this->values[$offset]);
     }
 
     /**
      * return the value with the given offset
      *
-     * @param string|int $mOffset Offset
+     * @param string|int $offset Offset
      *
      * @return mixed
      */
-    public function offsetGet($mOffset)
+    public function offsetGet($offset)
     {
-        return $this->values[$mOffset];
+        return $this->values[$offset];
     }
 
     /**
      * Return the value with the given offset, if is not set return the default
      *
-     * @param mixed $mOffset
-     * @param mixed $mDefault
+     * @param mixed $offset
+     * @param mixed $default
      *
      * @return mixed
      */
-    public function get($mOffset, $mDefault = null)
+    public function get($offset, $default = null)
     {
-        return (true === isset($this->values[$mOffset])) ? $this->values[$mOffset] : $mDefault;
+        return (isset($this->values[$offset])) ? $this->values[$offset] : $default;
     }
 
     /**
      * Set all values
      *
-     * @param array $aValues
+     * @param array $values
      *
      * @return $this
      */
-    public function set(array $aValues)
+    public function set(array $values)
     {
-        $this->values = $aValues;
+        $this->values = $values;
 
         return $this;
     }
@@ -195,18 +196,18 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     /**
      * set the value by the given offset
      *
-     * @param string|int $mOffset Offset
-     * @param mixed      $mValue  ProxyServer
+     * @param string|int $offset Offset
+     * @param mixed      $value  ProxyServer
      *
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function offsetSet($mOffset, $mValue)
+    public function offsetSet($offset, $value)
     {
-        if (false === is_string($mOffset) and false === is_integer($mOffset)) {
-            throw new \InvalidArgumentException('Invalid offset given: ' . gettype($mOffset));
+        if (!is_string($offset) && !is_integer($offset)) {
+            throw new \InvalidArgumentException('Invalid offset given: ' . gettype($offset));
         }
-        $this->values[$mOffset] = $mValue;
+        $this->values[$offset] = $value;
 
         return $this;
     }
@@ -214,13 +215,13 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     /**
      * unset the value by the offset
      *
-     * @param string|int $mOffset Offset
+     * @param string|int $offset Offset
      *
      * @return $this
      */
-    public function offsetUnset($mOffset)
+    public function offsetUnset($offset)
     {
-        unset($this->values[$mOffset]);
+        unset($this->values[$offset]);
 
         return $this;
     }
@@ -238,23 +239,23 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     /**
      * seek the pointer to the offset position
      *
-     * @param int $iOffset Seek position
+     * @param int $offset Seek position
      *
      * @return mixed
      * @throws \OutOfBoundsException
      */
-    public function seek($iOffset)
+    public function seek($offset)
     {
         $this->rewind();
-        $iPosition = 0;
+        $position = 0;
 
-        while ($iPosition < $iOffset and true === $this->valid()) {
+        while ($position < $offset && $this->valid()) {
             $this->next();
-            $iPosition++;
+            $position++;
         }
 
-        if (false === $this->valid()) {
-            throw new \OutOfBoundsException('Invalid seek position: ' . $iOffset);
+        if (!$this->valid()) {
+            throw new \OutOfBoundsException('Invalid seek position: ' . $offset);
         }
 
         return $this->current();
@@ -263,26 +264,26 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     /**
      * Try to seek to given offset
      *
-     * @param mixed $mKey
-     * @param bool  $bStrictMode
+     * @param mixed $key
+     * @param bool  $strictMode
      *
      * @return mixed
      * @throws \OutOfBoundsException
      */
-    public function seekToKey($mKey, $bStrictMode = true)
+    public function seekToKey($key, $strictMode = true)
     {
         $this->rewind();
-        if ($bStrictMode === true) {
-            while (true === $this->valid() and $mKey !== $this->key()) {
+        if ($strictMode) {
+            while ($this->valid() && $key !== $this->key()) {
                 $this->next();
             }
         } else {
-            while (true === $this->valid() and $mKey != $this->key()) {
+            while ($this->valid() && $key != $this->key()) {
                 $this->next();
             }
         }
-        if (false === $this->valid()) {
-            throw new \OutOfBoundsException('Invalid seek position: ' . $mKey);
+        if (!$this->valid()) {
+            throw new \OutOfBoundsException('Invalid seek position: ' . $key);
         }
 
         return $this->current();
@@ -295,7 +296,7 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
      */
     public function isEmpty()
     {
-        return true === empty($this->values);
+        return empty($this->values);
     }
 
     /**
@@ -346,34 +347,34 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     /**
      * Filters the current values and return a new collection
      *
-     * @param \Closure $cClosure
+     * @param \Closure $closure
      *
      * @return AbstractCollection
      */
-    public function filter(\Closure $cClosure)
+    public function filter(\Closure $closure)
     {
-        $sClassName      = get_class($this);
-        $aFilteredValues = array();
-        foreach ($this->values as $sKey => $mValue) {
-            if (true === $cClosure($mValue, $sKey)) {
-                $aFilteredValues[$sKey] = $mValue;
+        $className      = get_class($this);
+        $filteredValues = array();
+        foreach ($this->values as $key => $value) {
+            if (true === $closure($value, $key)) {
+                $filteredValues[$key] = $value;
             }
         }
 
-        return new $sClassName($aFilteredValues);
+        return new $className($filteredValues);
     }
 
     /**
      * Use a function on all values of the collection, and set the result as new values for the key
      *
-     * @param \Closure $cClosure
+     * @param \Closure $closure
      *
      * @return $this
      */
-    public function forAll(\Closure $cClosure)
+    public function forAll(\Closure $closure)
     {
-        foreach ($this->values as $mKey => $mValue) {
-            $this->offsetSet($mKey, $cClosure($mValue, $mKey));
+        foreach ($this->values as $key => $value) {
+            $this->offsetSet($key, $closure($value, $key));
         }
 
         return $this;
@@ -382,34 +383,35 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     /**
      * Slice elements and create a new instance
      *
-     * @param mixed $mStartKey
+     * @param mixed $startKey
      * @param bool  $bStrict
-     * @param int   $iLength
+     * @param int   $length
      *
      * @return AbstractCollection
      */
-    public function sliceByKey($mStartKey, $bStrict = true, $iLength = PHP_INT_MAX)
+    public function sliceByKey($startKey, $bStrict = true, $length = PHP_INT_MAX)
     {
-        $aSlice = array();
+        $slice = array();
         try {
-            $this->seekToKey($mStartKey, $bStrict);
+            $this->seekToKey($startKey, $bStrict);
 
-            if ($iLength > 0) {
-                $aSlice[$this->key()] = $this->current();
-                $iLength--;
+            if ($length > 0) {
+                $slice[$this->key()] = $this->current();
+                $length--;
                 $this->next();
             }
 
-            while ($iLength > 0 and true === $this->valid()) {
-                $aSlice[$this->key()] = $this->current();
-                $iLength--;
+            while ($length > 0 && $this->valid()) {
+                $slice[$this->key()] = $this->current();
+                $length--;
                 $this->next();
             }
-        } catch (\OutOfBoundsException $e) {
+        }
+        catch (\OutOfBoundsException $e) {
             //do nothing if key not exists
         }
-        $sClassName = get_class($this);
+        $className = get_class($this);
 
-        return new $sClassName($aSlice);
+        return new $className($slice);
     }
 }
