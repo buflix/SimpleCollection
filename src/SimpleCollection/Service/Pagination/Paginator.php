@@ -2,7 +2,7 @@
 
 namespace SimpleCollection\Service\Pagination;
 
-use SimpleCollection\AbstractCollection;
+use SimpleCollection\Base\ScCollection;
 
 /**
  * Paginator for collections
@@ -51,7 +51,7 @@ class Paginator implements \Countable, \IteratorAggregate
     /**
      * @see \IteratorAggregate
      *
-     * @return AbstractCollection
+     * @return ScCollection
      * @throws \OutOfBoundsException
      */
     public function getIterator()
@@ -64,7 +64,7 @@ class Paginator implements \Countable, \IteratorAggregate
             $result[$this->collection->key()] = $firstValue;
             while ($restOfResults > 0) {
                 $value = $this->collection->scNext();
-                if ($value === AbstractCollection::NOT_SET_FLAG) {
+                if ($value === ScCollection::NOT_SET_FLAG) {
                     throw new \OutOfBoundsException();
                 }
                 $result[$this->collection->key()] = $value;

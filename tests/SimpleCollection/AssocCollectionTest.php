@@ -2,8 +2,8 @@
 
 namespace Tests\SimpleCollection;
 
-use SimpleCollection\AbstractCollection;
 use SimpleCollection\AssocCollection;
+use SimpleCollection\Base\ScCollection;
 
 /**
  * AssocCollection Test
@@ -89,7 +89,7 @@ class AssocCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(3, $this->object->next());
 
         $this->assertFalse($this->object->next());
-        $this->assertEquals(AbstractCollection::NOT_SET_FLAG, $this->object->scNext());
+        $this->assertEquals(ScCollection::NOT_SET_FLAG, $this->object->scNext());
     }
 
     /***
@@ -97,12 +97,12 @@ class AssocCollectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testScNextAndPrev()
     {
-        $this->assertEquals(AbstractCollection::NOT_SET_FLAG, $this->object->scNext());
-        $this->assertEquals(AbstractCollection::NOT_SET_FLAG, $this->object->scPrev());
+        $this->assertEquals(ScCollection::NOT_SET_FLAG, $this->object->scNext());
+        $this->assertEquals(ScCollection::NOT_SET_FLAG, $this->object->scPrev());
 
         $this->object->set(array(1, false, true, 0, null, ''));
 
-        $this->assertEquals(AbstractCollection::NOT_SET_FLAG, $this->object->scPrev());
+        $this->assertEquals(ScCollection::NOT_SET_FLAG, $this->object->scPrev());
 
         $this->assertEquals(1, $this->object->rewind());
         $this->assertFalse($this->object->scNext());
@@ -124,7 +124,7 @@ class AssocCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->object->scPrev());
 
         $this->assertEquals('', $this->object->scNext());
-        $this->assertEquals(AbstractCollection::NOT_SET_FLAG, $this->object->scNext());
+        $this->assertEquals(ScCollection::NOT_SET_FLAG, $this->object->scNext());
     }
 
     /**

@@ -2,13 +2,15 @@
 
 namespace SimpleCollection;
 
+use SimpleCollection\Base\ScCollection;
+
 /**
  * Collection, will reset value keys on construct
  *
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class ArrayCollection extends AbstractCollection
+class ArrayCollection extends ScCollection
 {
 
     /**

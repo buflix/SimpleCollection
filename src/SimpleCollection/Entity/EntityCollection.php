@@ -2,7 +2,7 @@
 
 namespace SimpleCollection\Entity;
 
-use SimpleCollection\AbstractCollection;
+use SimpleCollection\Base\ScCollection;
 
 /**
  * abstract collection
@@ -10,7 +10,7 @@ use SimpleCollection\AbstractCollection;
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-abstract class AbstractEntityCollection extends AbstractCollection implements EntityInterface
+abstract class EntityCollection extends ScCollection implements EntityInterface
 {
 
     /**

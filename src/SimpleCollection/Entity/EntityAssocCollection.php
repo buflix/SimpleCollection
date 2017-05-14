@@ -8,7 +8,7 @@ namespace SimpleCollection\Entity;
  * @package SimpleCollection
  * @author  Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class EntityAssocCollection extends AbstractEntityCollection
+class EntityAssocCollection extends EntityCollection
 {
 
     /**
