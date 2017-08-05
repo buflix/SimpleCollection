@@ -7,6 +7,7 @@ namespace SimpleCollection;
  *
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
+ * @author    Willi Eßer <willi.esser@troublete.com>
  */
 class ArrayCollection extends AbstractCollection
 {
@@ -43,10 +44,10 @@ class ArrayCollection extends AbstractCollection
      *
      * @return $this
      */
-    public function set(array $aValues)
+    public function update(array $aValues)
     {
-        parent::set($aValues);
-
-        return $this->resetKeys();
+        $modifiedList = clone $this;
+        $modifiedList->values = array_values($aValues);
+        return $modifiedList;
     }
 }

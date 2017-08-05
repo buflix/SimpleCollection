@@ -8,6 +8,7 @@ use SimpleCollection\Service\Pagination\PaginationCollectionInterface;
  *
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
+ * @author    Willi Eßer <willi.esser@troublete.com>
  */
 abstract class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator, PaginationCollectionInterface
 {
@@ -40,14 +41,13 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     }
 
     /**
-     * returns current value
+     * Method to retrieve the value at the current pointer position
      *
-     * @return mixed
+     * @return mixed|null
      */
     public function current()
     {
-        $sKey = key($this->values);
-
+        $sKey = $this->key();
         return (true === isset($this->values[$sKey])) ? $this->values[$sKey] : null;
     }
 
@@ -62,7 +62,7 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     }
 
     /**
-     * Like next, but return Not_Set_Flag if there are no next value instead of false
+     * Like next, but return self::Not_Set_Flag if there are no next value instead of false
      *
      * @return mixed
      */
@@ -112,13 +112,7 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
      */
     public function valid()
     {
-        $bIsValid = false;
-        if (null !== $this->values) {
-            $sKey     = $this->key();
-            $bIsValid = isset($sKey);
-        }
-
-        return $bIsValid;
+        return $this->key() !== null;
     }
 
     /**
@@ -179,17 +173,15 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     }
 
     /**
-     * Set all values
-     *
+     * Method to reset all values
      * @param array $aValues
-     *
-     * @return $this
+     * @return AbstractCollection
      */
-    public function set(array $aValues)
+    public function update(array $aValues)
     {
-        $this->values = $aValues;
-
-        return $this;
+        $modifiedCollection = clone $this;
+        $modifiedCollection->values = $aValues;
+        return $modifiedCollection;
     }
 
     /**
@@ -220,6 +212,10 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
      */
     public function offsetUnset($mOffset)
     {
+        if (false === is_string($mOffset) and false === is_integer($mOffset)) {
+            throw new \InvalidArgumentException('Invalid offset given: ' . gettype($mOffset));
+        }
+
         unset($this->values[$mOffset]);
 
         return $this;
@@ -263,7 +259,7 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     /**
      * Try to seek to given offset
      *
-     * @param mixed $mKey
+     * @param string|int $mKey
      * @param bool  $bStrictMode
      *
      * @return mixed
@@ -295,7 +291,7 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
      */
     public function isEmpty()
     {
-        return true === empty($this->values);
+        return $this->values === [] || !isset($this->values);
     }
 
     /**
@@ -344,39 +340,33 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     }
 
     /**
-     * Filters the current values and return a new collection
-     *
+     * Produces an immutable version of the list and filters for values
      * @param \Closure $cClosure
-     *
      * @return AbstractCollection
      */
     public function filter(\Closure $cClosure)
     {
-        $sClassName      = get_class($this);
-        $aFilteredValues = array();
-        foreach ($this->values as $sKey => $mValue) {
-            if (true === $cClosure($mValue, $sKey)) {
-                $aFilteredValues[$sKey] = $mValue;
+        $modifiedCollection = clone $this;
+        foreach ($modifiedCollection->values as $sKey => $mValue) {
+            if (false === call_user_func($cClosure, $mValue, $sKey)) {
+                unset($modifiedCollection->values[$sKey]);
             }
         }
-
-        return new $sClassName($aFilteredValues);
+        return $modifiedCollection;
     }
 
     /**
-     * Use a function on all values of the collection, and set the result as new values for the key
-     *
+     * Method too apply a closure to all values available. Will return an immutable state.
      * @param \Closure $cClosure
-     *
-     * @return $this
+     * @return AbstractCollection
      */
     public function forAll(\Closure $cClosure)
     {
-        foreach ($this->values as $mKey => $mValue) {
-            $this->offsetSet($mKey, $cClosure($mValue, $mKey));
+        $modifiedCollection = clone $this;
+        foreach ($modifiedCollection->values as $mKey => $mValue) {
+            $modifiedCollection->offsetSet($mKey, $cClosure($mValue, $mKey));
         }
-
-        return $this;
+        return $modifiedCollection;
     }
 
     /**

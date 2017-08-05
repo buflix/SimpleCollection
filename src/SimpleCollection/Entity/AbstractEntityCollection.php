@@ -54,7 +54,7 @@ abstract class AbstractEntityCollection extends AbstractCollection implements En
     {
         $this->checkClasses($aEntities);
 
-        return parent::set($aEntities);
+        return parent::update($aEntities);
     }
 
     /**

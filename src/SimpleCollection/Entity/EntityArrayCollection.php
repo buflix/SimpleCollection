@@ -31,8 +31,9 @@ class EntityArrayCollection extends AbstractEntityCollection
      */
     public function set(array $aValues)
     {
-        parent::set($aValues);
-
-        return $this->resetKeys();
+        /** @var EntityArrayCollection $immutableState */
+        $immutableState = parent::set($aValues);
+        $immutableState->resetKeys();
+        return $immutableState;
     }
 }
