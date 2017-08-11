@@ -69,16 +69,16 @@ class EntityAssocCollectionTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertCount(0, $this->object);
 
-        $this->object->set(array(
+        $immutable = $this->object->set(array(
             new DummyEntity('abc'),
             new DummyEntity('cde'),
             new DummyEntity('efg'),
         ));
-        $this->object->offsetExists('abc');
-        $this->object->offsetExists('cde');
-        $this->object->offsetExists('efg');
+        $immutable->offsetExists('abc');
+        $immutable->offsetExists('cde');
+        $immutable->offsetExists('efg');
 
-        $this->assertCount(3, $this->object);
+        $this->assertCount(3, $immutable);
     }
 
     /**

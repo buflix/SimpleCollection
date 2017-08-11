@@ -64,16 +64,16 @@ class EntityArrayCollectionTest extends \PHPUnit_Framework_TestCase
             3     => new DummyEntity('blafasel')
         );
 
-        $this->object->set($aEntities);
+        $immutable = $this->object->set($aEntities);
 
-        $this->assertCount(3, $this->object);
-        $this->assertTrue($this->object->offsetExists(0));
-        $this->assertTrue($this->object->offsetExists(1));
-        $this->assertTrue($this->object->offsetExists(2));
+        $this->assertCount(3, $immutable);
+        $this->assertTrue($immutable->offsetExists(0));
+        $this->assertTrue($immutable->offsetExists(1));
+        $this->assertTrue($immutable->offsetExists(2));
 
-        $this->assertFalse($this->object->offsetExists('x'));
-        $this->assertFalse($this->object->offsetExists('bla'));
-        $this->assertFalse($this->object->offsetExists(3));
+        $this->assertFalse($immutable->offsetExists('x'));
+        $this->assertFalse($immutable->offsetExists('bla'));
+        $this->assertFalse($immutable->offsetExists(3));
     }
 
     /**

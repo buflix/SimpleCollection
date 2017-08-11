@@ -1,4 +1,14 @@
-# CHANGELOG
-This project use Semantic Versioning -> http://semver.org/spec/v2.0.0.html
+# Changelog
+All notable changes to this project will be documented in this file.
 
-## [0.0.0] - @todo
+The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+- Docs in README
+
+### Changed
+- API to be immutable pattern supportive
+- Unit Tests to fit new pattern handling

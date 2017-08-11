@@ -16,11 +16,11 @@
     "php": ">=5.4"
   },
   "require-dev": {
-    "phpunit/phpunit": "3.7.*"
+    "phpunit/phpunit": "~3.7"
   },
   "autoload": {
-    "psr-0": {
-      "SimpleCollection": "src/"
+    "psr-4": {
+      "SimpleCollection\\": "./src/SimpleCollection"
     }
   }
 }
