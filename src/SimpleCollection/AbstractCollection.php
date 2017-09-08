@@ -9,7 +9,7 @@ use SimpleCollection\Service\Pagination\PaginationCollectionInterface;
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-abstract class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator, PaginationCollectionInterface
+abstract class AbstractCollection implements \Countable, \ArrayAccess, \SeekableIterator, PaginationCollectionInterface, \JsonSerializable
 {
 
     /**
@@ -412,4 +412,15 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
 
         return new $sClassName($aSlice);
     }
+
+    /**
+     * @see \JsonSerializable
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->getAll();
+    }
+
 }

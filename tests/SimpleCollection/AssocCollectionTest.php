@@ -451,6 +451,25 @@ class AssocCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($aExpectedResult, $oResult->getAll());
     }
 
+
+    /**
+     * Test json serialize
+     */
+    public function testJsonSerialize()
+    {
+        $empty = $this->object->jsonSerialize();
+        $this->assertTrue(is_array($empty));
+        $this->assertEmpty($empty);
+
+        $this->object->set(['a' => 1,'b' => 2, 42 => 3]);
+        $json = $this->object->jsonSerialize();
+        $this->assertTrue(is_array($json));
+        $this->assertArrayHasKey('a', $json);
+        $this->assertArrayHasKey('b', $json);
+        $this->assertArrayHasKey(42, $json);
+        $this->assertArrayNotHasKey(1337, $json);
+    }
+
     /**
      * Dataprovider for testSliceByKey
      *
