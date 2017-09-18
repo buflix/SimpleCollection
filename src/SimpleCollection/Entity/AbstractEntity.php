@@ -18,16 +18,16 @@ abstract class AbstractEntity implements EntityInterface
      */
     public function toArray()
     {
-        $aReturn = array();
+        $return = array();
 
-        foreach (get_object_vars($this) as $sKey => $mValue) {
-            if ($mValue instanceof EntityInterface or true === method_exists($mValue, 'toArray')) {
-                $aReturn[$sKey] = $mValue->toArray();
+        foreach (get_object_vars($this) as $key => $value) {
+            if ($value instanceof EntityInterface || method_exists($value, 'toArray')) {
+                $return[$key] = $value->toArray();
             } else {
-                $aReturn[$sKey] = $mValue;
+                $return[$key] = $value;
             }
         }
 
-        return $aReturn;
+        return $return;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace SimpleCollection\Service\Pagination;
 
-use SimpleCollection\AbstractCollection;
+use SimpleCollection\Base\ScCollection;
 
 /**
  * Paginator for collections
@@ -37,49 +37,63 @@ class Paginator implements \Countable, \IteratorAggregate
     /**
      * Paginator constructor.
      *
-     * @param PaginationCollectionInterface $oCollection
-     * @param int                $iPage
-     * @param int                $iItemsPerPage
+     * @param PaginationCollectionInterface $collection
+     * @param int                           $page
+     * @param int                           $itemsPerPage
      */
-    public function __construct(PaginationCollectionInterface $oCollection, $iPage = 1, $iItemsPerPage = 10)
+    public function __construct(PaginationCollectionInterface $collection, $page = 1, $itemsPerPage = 10)
     {
-        $this->collection   = $oCollection;
-        $this->page         = $iPage;
-        $this->itemsPerPage = $iItemsPerPage;
+        $this->collection   = $collection;
+        $this->page         = $page;
+        $this->itemsPerPage = $itemsPerPage;
     }
 
     /**
      * @see \IteratorAggregate
      *
-     * @return AbstractCollection
+     * @return ScCollection
      * @throws \OutOfBoundsException
      */
     public function getIterator()
     {
-        $aResult = array();
-        $iStart  = ($this->itemsPerPage * ($this->page - 1));
-        if ($iStart < 0) {
-            throw new \OutOfBoundsException('Start index cant no be lower then 1');
-        }
+        $result        = array();
+        $startPosition = $this->fetchStartPosition();
         try {
-            $iRestOfResults                    = ($this->itemsPerPage - 1);
-            $mFirstValues                      = $this->collection->seek($iStart);
-            $aResult[$this->collection->key()] = $mFirstValues;
-            while ($iRestOfResults > 0) {
-                $mValue = $this->collection->scNext();
-                if ($mValue === AbstractCollection::NOT_SET_FLAG) {
+            $restOfResults                    = ($this->itemsPerPage - 1);
+            $firstValue                       = $this->collection->seek($startPosition);
+            $result[$this->collection->key()] = $firstValue;
+            while ($restOfResults > 0) {
+                $value = $this->collection->scNext();
+                if ($value === ScCollection::NOT_SET_FLAG) {
                     throw new \OutOfBoundsException();
                 }
-                $aResult[$this->collection->key()] = $mValue;
-                $iRestOfResults--;
+                $result[$this->collection->key()] = $value;
+                $restOfResults--;
             }
 
-        } catch (\OutOfBoundsException $oException) {
+        }
+        catch (\OutOfBoundsException $exception) {
             // do nothing, this exception is not critical
         }
-        $sClassName = get_class($this->collection);
+        $className = get_class($this->collection);
 
-        return new $sClassName($aResult);
+        return new $className($result);
+    }
+
+    /**
+     * Fetch startPosition to seek
+     *
+     * @return int
+     * @throws \OutOfBoundsException
+     */
+    protected function fetchStartPosition()
+    {
+        $start = ($this->itemsPerPage * ($this->page - 1));
+        if ($start < 0) {
+            throw new \OutOfBoundsException('Start index cant no be lower then 1');
+        }
+
+        return $start;
     }
 
     /**

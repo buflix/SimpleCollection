@@ -2,8 +2,8 @@
 
 namespace Tests\SimpleCollection;
 
-use SimpleCollection\AbstractCollection;
 use SimpleCollection\AssocCollection;
+use SimpleCollection\Base\ScCollection;
 
 /**
  * AssocCollection Test
@@ -89,7 +89,7 @@ class AssocCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(3, $immutable->next());
 
         $this->assertFalse($immutable->next());
-        $this->assertEquals(AbstractCollection::NOT_SET_FLAG, $immutable->scNext());
+        $this->assertEquals(ScCollection::NOT_SET_FLAG, $immutable->scNext());
     }
 
     /***
@@ -97,12 +97,12 @@ class AssocCollectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testScNextAndPrev()
     {
-        $this->assertEquals(AbstractCollection::NOT_SET_FLAG, $this->object->scNext());
-        $this->assertEquals(AbstractCollection::NOT_SET_FLAG, $this->object->scPrev());
+        $this->assertEquals(ScCollection::NOT_SET_FLAG, $this->object->scNext());
+        $this->assertEquals(ScCollection::NOT_SET_FLAG, $this->object->scPrev());
 
         $immutable = $this->object->update(array(1, false, true, 0, null, ''));
 
-        $this->assertEquals(AbstractCollection::NOT_SET_FLAG, $immutable->scPrev());
+        $this->assertEquals(ScCollection::NOT_SET_FLAG, $immutable->scPrev());
 
         $this->assertEquals(1, $immutable->rewind());
         $this->assertFalse($immutable->scNext());
@@ -124,7 +124,7 @@ class AssocCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($immutable->scPrev());
 
         $this->assertEquals('', $immutable->scNext());
-        $this->assertEquals(AbstractCollection::NOT_SET_FLAG, $immutable->scNext());
+        $this->assertEquals(ScCollection::NOT_SET_FLAG, $immutable->scNext());
     }
 
     /**

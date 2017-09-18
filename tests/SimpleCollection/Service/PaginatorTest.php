@@ -2,9 +2,9 @@
 
 namespace Tests\SimpleCollection\Service;
 
-use SimpleCollection\AbstractCollection;
 use SimpleCollection\ArrayCollection;
 use SimpleCollection\AssocCollection;
+use SimpleCollection\Base\ScCollection;
 use SimpleCollection\Service\Pagination\Paginator;
 
 /**
@@ -19,15 +19,15 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
     /**
      * Test paginator
      *
-     * @param AbstractCollection $oCollection
-     * @param int                $iPage
-     * @param int                $iItemsPerPage
-     * @param array              $expectedItemKeys
+     * @param ScCollection $oCollection
+     * @param int          $iPage
+     * @param int          $iItemsPerPage
+     * @param array        $expectedItemKeys
      *
      * @dataProvider collectionProvider
      */
     public function testPaginatorWithCollection(
-        AbstractCollection $oCollection,
+        ScCollection $oCollection,
         $iPage,
         $iItemsPerPage,
         array $expectedItemKeys

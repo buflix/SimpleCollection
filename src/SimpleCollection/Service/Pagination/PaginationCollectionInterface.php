@@ -8,7 +8,7 @@ namespace SimpleCollection\Service\Pagination;
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-interface PaginationCollectionInterface
+interface PaginationCollectionInterface extends \Countable, \SeekableIterator
 {
 
     /**

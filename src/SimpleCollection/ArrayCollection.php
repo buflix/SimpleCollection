@@ -2,6 +2,8 @@
 
 namespace SimpleCollection;
 
+use SimpleCollection\Base\ScCollection;
+
 /**
  * Collection, will reset value keys on construct
  *
@@ -9,30 +11,30 @@ namespace SimpleCollection;
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  * @author    Willi Eßer <willi.esser@troublete.com>
  */
-class ArrayCollection extends AbstractCollection
+class ArrayCollection extends ScCollection
 {
 
     /**
      * ArrayCollection constructor.
      *
-     * @param array $aValues
+     * @param array $values
      */
-    public function __construct(array $aValues = array())
+    public function __construct(array $values = array())
     {
-        parent::__construct($aValues);
+        parent::__construct($values);
         $this->resetKeys();
     }
 
     /**
      * add a entity to the collection
      *
-     * @param mixed $mValue
+     * @param mixed $value
      *
      * @return $this
      */
-    public function add($mValue)
+    public function add($value)
     {
-        $this->values[] = $mValue;
+        $this->values[] = $value;
 
         return $this;
     }
@@ -40,14 +42,14 @@ class ArrayCollection extends AbstractCollection
     /**
      * Set all values and reset keys
      *
-     * @param array $aValues
+     * @param array $values
      *
      * @return $this
      */
-    public function update(array $aValues)
+    public function update(array $values)
     {
-        $modifiedList = clone $this;
-        $modifiedList->values = array_values($aValues);
-        return $modifiedList;
+        parent::set($values);
+
+        return $this->resetKeys();
     }
 }
