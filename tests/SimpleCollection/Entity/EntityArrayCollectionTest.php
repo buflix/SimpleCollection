@@ -75,6 +75,29 @@ class EntityArrayCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($immutable->offsetExists('bla'));
         $this->assertFalse($immutable->offsetExists(3));
     }
+    /**
+     * Test json serialize
+     */
+    public function testJsonSerialize()
+    {
+        $empty = $this->object->jsonSerialize();
+        $this->assertTrue(is_array($empty));
+        $this->assertEmpty($empty);
+
+        $aEntities = array(
+            'x'   => new DummyEntity('X'),
+            'bla' => new DummyEntity(2),
+            3     => new DummyEntity('blafasel')
+        );
+        $this->object->set($aEntities);
+
+        $json = $this->object->jsonSerialize();
+        $this->assertArrayHasKey(0, $json);
+        $this->assertArrayHasKey(1, $json);
+        $this->assertArrayHasKey(2, $json);
+        $this->assertArrayNotHasKey(1337, $json);
+    }
+
 
     /**
      * Test to add new entity to collection

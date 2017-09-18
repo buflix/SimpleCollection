@@ -99,6 +99,25 @@ class ArrayCollectionTest extends AssocCollectionTest
         $this->assertFalse($immutable->offsetExists($iValueCount + 1));
     }
 
+
+    /**
+     * Test json serialize
+     */
+    public function testJsonSerialize()
+    {
+        $empty = $this->object->jsonSerialize();
+        $this->assertTrue(is_array($empty));
+        $this->assertEmpty($empty);
+
+        $this->object->set([1,2,3]);
+        $json = $this->object->jsonSerialize();
+        $this->assertTrue(is_array($json));
+        $this->assertArrayHasKey(0, $json);
+        $this->assertArrayHasKey(1, $json);
+        $this->assertArrayHasKey(2, $json);
+        $this->assertArrayNotHasKey(3, $json);
+    }
+
     /**
      * DataProvider for AssocCollectionTest::testFilter
      *

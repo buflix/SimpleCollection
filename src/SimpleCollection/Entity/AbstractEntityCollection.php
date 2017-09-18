@@ -122,4 +122,14 @@ abstract class AbstractEntityCollection extends AbstractCollection implements En
 
         return $this;
     }
+
+    /**
+     * @see \JsonSerializable
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
+    }
 }
