@@ -9,7 +9,6 @@ use SimpleCollection\Base\ScCollection;
  *
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
- * @author    Willi Eßer <willi.esser@troublete.com>
  */
 class ArrayCollection extends ScCollection
 {
@@ -46,7 +45,7 @@ class ArrayCollection extends ScCollection
      *
      * @return $this
      */
-    public function update(array $values)
+    public function set(array $values)
     {
         parent::set($values);
 

@@ -48,12 +48,12 @@ class ArrayCollectionTest extends AssocCollectionTest
      */
     public function testResetValuesOnSet()
     {
-        $immutable = $this->object->update(array(2 => 42, '3' => 'mc', '4' => 'ab'));
+        $this->object->set(array(2 => 42, '3' => 'mc', '4' => 'ab'));
 
-        $this->assertEquals(42, $immutable->offsetGet(0));
-        $this->assertEquals('mc', $immutable->offsetGet(1));
-        $this->assertEquals('ab', $immutable->offsetGet(2));
-        $this->assertFalse($immutable->offsetExists(3));
+        $this->assertEquals(42, $this->object->offsetGet(0));
+        $this->assertEquals('mc', $this->object->offsetGet(1));
+        $this->assertEquals('ab', $this->object->offsetGet(2));
+        $this->assertFalse($this->object->offsetExists(3));
     }
 
     /**
@@ -61,10 +61,10 @@ class ArrayCollectionTest extends AssocCollectionTest
      */
     public function testGetKeys()
     {
-        $immutable = $this->object->update(array('x' => 2.5, '3' => 'bla', 0 => 2));
+        $this->object->set(array('x' => 2.5, '3' => 'bla', 0 => 2));
         $this->assertEquals(
             array(0, 1, 2),
-            $immutable->getKeys()
+            $this->object->getKeys()
         );
     }
 
@@ -78,8 +78,8 @@ class ArrayCollectionTest extends AssocCollectionTest
      */
     public function testConstruct(array $aValues, $iAssertCount)
     {
-        $immutable = $this->object->update($aValues);
-        $this->assertCount($iAssertCount, $immutable);
+        $this->object->set($aValues);
+        $this->assertCount($iAssertCount, $this->object);
     }
 
     /**
@@ -92,11 +92,11 @@ class ArrayCollectionTest extends AssocCollectionTest
      */
     public function testResetKeys(array $aValues, $iValueCount)
     {
-        $immutable = $this->object->update($aValues);
+        $this->object->set($aValues);
         for ($i = 0; $i < $iValueCount; $i++) {
-            $this->assertTrue($immutable->offsetExists($i));
+            $this->assertTrue($this->object->offsetExists($i));
         }
-        $this->assertFalse($immutable->offsetExists($iValueCount + 1));
+        $this->assertFalse($this->object->offsetExists($iValueCount + 1));
     }
 
 
@@ -149,7 +149,7 @@ class ArrayCollectionTest extends AssocCollectionTest
         $aTestCases['oneIsBiggerThenOne'] = array(
             'aValues'         => array(1, 2, 'x' => 3),
             'cClosure'        => $cKeyIsBiggerThenOne,
-            'aExpectedResult' => array(2 => 3)
+            'aExpectedResult' => array(3)
         );
 
         return $aTestCases;

@@ -8,7 +8,7 @@ namespace SimpleCollection\Base;
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class Collection extends ArraySeekableCollection
+class Collection extends ArraySeekableCollection implements \JsonSerializable
 {
 
     /**
@@ -211,4 +211,15 @@ class Collection extends ArraySeekableCollection
 
         return new $className($slice);
     }
+
+    /**
+     * @see \JsonSerializable::jsonSerialize()
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->getAll();
+    }
+
 }

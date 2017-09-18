@@ -123,4 +123,14 @@ abstract class EntityCollection extends ScCollection implements EntityInterface
 
         return $this;
     }
+
+    /**
+     * @see \JsonSerializable::jsonSerialize()
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
+    }
 }

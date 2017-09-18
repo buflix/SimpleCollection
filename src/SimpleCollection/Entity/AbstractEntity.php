@@ -7,7 +7,7 @@ namespace SimpleCollection\Entity;
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-abstract class AbstractEntity implements EntityInterface
+abstract class AbstractEntity implements EntityInterface, \JsonSerializable
 {
 
     /**
@@ -29,5 +29,15 @@ abstract class AbstractEntity implements EntityInterface
         }
 
         return $return;
+    }
+
+    /**
+     * @see \JsonSerializable::jsonSerialize()
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
     }
 }

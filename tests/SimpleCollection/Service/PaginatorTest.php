@@ -2,6 +2,7 @@
 
 namespace Tests\SimpleCollection\Service;
 
+use PHPUnit\Framework\TestCase;
 use SimpleCollection\ArrayCollection;
 use SimpleCollection\AssocCollection;
 use SimpleCollection\Base\ScCollection;
@@ -13,7 +14,7 @@ use SimpleCollection\Service\Pagination\Paginator;
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class PaginatorTest extends \PHPUnit_Framework_TestCase
+class PaginatorTest extends TestCase
 {
 
     /**
@@ -57,7 +58,7 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
     {
         $oPaginator = new Paginator(new ArrayCollection(), $iPage, $iItemsPerPage);
         foreach ($oPaginator as $mItem) {
-            echo 'does not happen';
+            echo 'should not happen';
         }
     }
 

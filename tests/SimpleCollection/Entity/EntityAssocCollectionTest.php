@@ -2,6 +2,7 @@
 
 namespace Tests\SimpleCollection\Entity;
 
+use PHPUnit\Framework\TestCase;
 use SimpleCollection\Entity\EntityAssocCollection;
 
 /**
@@ -10,7 +11,7 @@ use SimpleCollection\Entity\EntityAssocCollection;
  * @package Tests\SimpleCollection\Entity
  * @author  Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class EntityAssocCollectionTest extends \PHPUnit_Framework_TestCase
+class EntityAssocCollectionTest extends TestCase
 {
 
     /**
@@ -69,16 +70,16 @@ class EntityAssocCollectionTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertCount(0, $this->object);
 
-        $immutable = $this->object->set(array(
+        $this->object->set(array(
             new DummyEntity('abc'),
             new DummyEntity('cde'),
             new DummyEntity('efg'),
         ));
-        $immutable->offsetExists('abc');
-        $immutable->offsetExists('cde');
-        $immutable->offsetExists('efg');
+        $this->object->offsetExists('abc');
+        $this->object->offsetExists('cde');
+        $this->object->offsetExists('efg');
 
-        $this->assertCount(3, $immutable);
+        $this->assertCount(3, $this->object);
     }
 
     /**
@@ -163,7 +164,7 @@ class EntityAssocCollectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testCheckClassException()
     {
-        $oMock = $this->getMock('SimpleCollection\Entity\EntityInterface');
+        $oMock = $this->createMock('SimpleCollection\Entity\EntityInterface');
         $this->object->add($oMock);
     }
 }
