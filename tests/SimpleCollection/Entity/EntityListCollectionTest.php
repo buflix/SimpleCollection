@@ -3,7 +3,7 @@
 namespace Tests\SimpleCollection\Entity;
 
 use PHPUnit\Framework\TestCase;
-use SimpleCollection\Entity\EntityArrayCollection;
+use SimpleCollection\Entity\EntityListCollection;
 
 /**
  * EntityArrayCollectionTest
@@ -11,13 +11,13 @@ use SimpleCollection\Entity\EntityArrayCollection;
  * @package Tests\SimpleCollection\Entity
  * @author  Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class EntityArrayCollectionTest extends TestCase
+class EntityListCollectionTest extends TestCase
 {
 
     /**
      * Object to test
      *
-     * @var EntityArrayCollection
+     * @var EntityListCollection
      */
     protected $object;
 
@@ -27,7 +27,7 @@ class EntityArrayCollectionTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->object = new EntityArrayCollection();
+        $this->object = new EntityListCollection();
     }
 
     /**
@@ -36,7 +36,7 @@ class EntityArrayCollectionTest extends TestCase
     public function testConstruct()
     {
         $this->assertCount(0, $this->object);
-        $this->object = new EntityArrayCollection(
+        $this->object = new EntityListCollection(
             array(
                 'x'   => new DummyEntity('bla'),
                 42    => new DummyEntity(2),
@@ -114,16 +114,5 @@ class EntityArrayCollectionTest extends TestCase
         $this->object->add(new DummyEntity('x'));
         $this->assertCount(2, $this->object);
         $this->assertTrue($this->object->offsetExists(1));
-    }
-
-    /**
-     * Test exception if not entityInterface instance given
-     *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Expect entity of class \SimpleCollection\Entity\EntityInterface
-     */
-    public function testCheckClass()
-    {
-        $this->object->add(new \stdClass());
     }
 }

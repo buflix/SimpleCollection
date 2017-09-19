@@ -156,15 +156,4 @@ class EntityAssocCollectionTest extends TestCase
             $this->object->toArray()
         );
     }
-
-    /**
-     * Test check class exception
-     *
-     * @expectedException \InvalidArgumentException
-     */
-    public function testCheckClassException()
-    {
-        $oMock = $this->createMock('SimpleCollection\Entity\EntityInterface');
-        $this->object->add($oMock);
-    }
 }

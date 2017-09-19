@@ -2,7 +2,8 @@
 
 namespace Tests\SimpleCollection;
 
-use SimpleCollection\ArrayCollection;
+use SimpleCollection\ListCollection;
+use Tests\SimpleCollection\Base\ScCollectionTest;
 
 /**
  * ArrayCollection Test
@@ -10,13 +11,13 @@ use SimpleCollection\ArrayCollection;
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class ArrayCollectionTest extends AssocCollectionTest
+class ListCollectionTest extends ScCollectionTest
 {
 
     /**
      * Object to test
      *
-     * @var ArrayCollection
+     * @var ListCollection
      */
     protected $object;
 
@@ -26,7 +27,7 @@ class ArrayCollectionTest extends AssocCollectionTest
     public function setUp()
     {
         parent::setUp();
-        $this->object = new ArrayCollection();
+        $this->object = new ListCollection();
     }
 
     /**

@@ -8,7 +8,7 @@ namespace SimpleCollection\Entity;
  * @package SimpleCollection
  * @author  Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class EntityArrayCollection extends EntityCollection
+class EntityListCollection extends AbstractEntityCollection
 {
 
     /**
@@ -34,5 +34,19 @@ class EntityArrayCollection extends EntityCollection
         parent::set($values);
 
         return $this->resetKeys();
+    }
+
+    /**
+     * Add Entity to collection
+     *
+     * @param EntityInterface $entity
+     *
+     * @return $this
+     */
+    public function add(EntityInterface $entity)
+    {
+        $this->values[] = $entity;
+
+        return $this;
     }
 }

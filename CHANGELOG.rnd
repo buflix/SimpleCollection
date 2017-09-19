@@ -9,9 +9,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Docs in README
 - implement \JsonSerializable interface to collections
+- magic methods (__get, __set, __isset, __unset, __toString) to all collections
+- Collection::updateItems to use a closure for every collection item and set the result to the collection
 
 ### Changed
-- collection inheritance
+- rename ?ArrayCollection to ?ListCollection
+- Collection inheritance
+- Collection::forAll just use callback without set the result of the closure => Collection::updateItems set the callback result
 
 ### Removed
-- AbstractCollection / AbstractEntityCollection => you can just use Collection / EntityCollection
+- AbstractCollection => you can just use Collection
+- checkClass() for entities to improve performance

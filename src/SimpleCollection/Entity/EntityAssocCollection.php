@@ -8,7 +8,7 @@ namespace SimpleCollection\Entity;
  * @package SimpleCollection
  * @author  Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class EntityAssocCollection extends EntityCollection
+class EntityAssocCollection extends AbstractEntityCollection
 {
 
     /**
@@ -18,7 +18,6 @@ class EntityAssocCollection extends EntityCollection
      */
     public function __construct(array $entities = array())
     {
-        $this->checkClasses($entities);
         parent::__construct($this->indexEntities($entities));
     }
 
@@ -53,9 +52,8 @@ class EntityAssocCollection extends EntityCollection
      *
      * @return $this
      */
-    public function add($entity)
+    public function add(AssocEntityInterface $entity)
     {
-        $this->checkClass($entity);
         $this->values[$entity->getCollectionIndex()] = $entity;
 
         return $this;
@@ -76,21 +74,5 @@ class EntityAssocCollection extends EntityCollection
         }
 
         return $indexEntities;
-    }
-
-    /**
-     * Check class
-     *
-     * @param AssocEntityInterface $entity
-     *
-     * @return $this
-     */
-    protected function checkClass($entity)
-    {
-        if (false === $entity instanceof AssocEntityInterface) {
-            throw new \InvalidArgumentException('Expect entity of class \SimpleCollection\Entity\AssocEntityInterface');
-        }
-
-        return $this;
     }
 }

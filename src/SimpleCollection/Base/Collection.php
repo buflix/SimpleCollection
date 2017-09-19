@@ -2,33 +2,75 @@
 
 namespace SimpleCollection\Base;
 
+use SimpleCollection\Entity\EntityInterface;
+
 /**
  * Collection Base collection
  *
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class Collection extends ArraySeekableCollection implements \JsonSerializable
+class Collection extends ArraySeekableCollection implements \JsonSerializable, EntityInterface
 {
-
     /**
-     * rewind the pointer for one position
+     * Magic Setter
      *
-     * @return mixed|false
+     * @param string|int $key
+     * @param mixed $value
+     *
+     * @return $this
      */
-    public function prev()
+    public function __set($key, $value)
     {
-        return prev($this->values);
+        $this->offsetSet($key, $value);
+
+        return $this;
     }
 
     /**
-     * return the last element in collection
+     * Magic getter
      *
-     * @return mixed|false
+     * @param string|int $key
+     *
+     * @return $this
      */
-    public function end()
+    public function __get($key)
     {
-        return end($this->values);
+        return $this->offsetGet($key);
+    }
+
+    /**
+     * Check if key exists / value
+     *
+     * @param string|int $name
+     *
+     * @return bool
+     */
+    public function __isset($name)
+    {
+        return $this->offsetExists($name);
+    }
+
+    /**
+     * Unset value by key
+     *
+     * @param string|int $name
+     *
+     * @return $this
+     */
+    public function __unset($name)
+    {
+        return $this->offsetUnset($name);
+    }
+
+    /**
+     * Return this collection as string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->toJson();
     }
 
     /**
@@ -42,20 +84,6 @@ class Collection extends ArraySeekableCollection implements \JsonSerializable
     public function get($offset, $default = null)
     {
         return (isset($this->values[$offset])) ? $this->values[$offset] : $default;
-    }
-
-    /**
-     * Set all values
-     *
-     * @param array $values
-     *
-     * @return $this
-     */
-    public function set(array $values)
-    {
-        $this->values = $values;
-
-        return $this;
     }
 
     /**
@@ -153,7 +181,7 @@ class Collection extends ArraySeekableCollection implements \JsonSerializable
         $className      = get_class($this);
         $filteredValues = array();
         foreach ($this->values as $key => $value) {
-            if (true === $closure($value, $key)) {
+            if ($closure($value, $key)) {
                 $filteredValues[$key] = $value;
             }
         }
@@ -168,10 +196,26 @@ class Collection extends ArraySeekableCollection implements \JsonSerializable
      *
      * @return $this
      */
+    public function updateItems(\Closure $closure)
+    {
+        foreach ($this->values as $key => $value) {
+            $this->offsetSet($key, $closure($key, $value));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use a function on all values of the collection, and set the result as new values for the key
+     *
+     * @param \Closure $closure
+     *
+     * @return $this
+     */
     public function forAll(\Closure $closure)
     {
         foreach ($this->values as $key => $value) {
-            $this->offsetSet($key, $closure($value, $key));
+            $closure($key, $value);
         }
 
         return $this;
@@ -213,13 +257,34 @@ class Collection extends ArraySeekableCollection implements \JsonSerializable
     }
 
     /**
+     * @see EntityInterface::toArray()
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->getAll();
+    }
+
+    /**
      * @see \JsonSerializable::jsonSerialize()
      *
      * @return array
      */
     public function jsonSerialize()
     {
-        return $this->getAll();
+        return $this->toArray();
     }
 
+    /**
+     * Return this collection as json string
+     *
+     * @param int $options
+     *
+     * @return string
+     */
+    public function toJson($options = 0)
+    {
+        return json_encode($this, $options);
+    }
 }

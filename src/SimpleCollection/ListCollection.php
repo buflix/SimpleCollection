@@ -10,7 +10,7 @@ use SimpleCollection\Base\ScCollection;
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class ArrayCollection extends ScCollection
+class ListCollection extends ScCollection
 {
 
     /**
@@ -25,7 +25,7 @@ class ArrayCollection extends ScCollection
     }
 
     /**
-     * add a entity to the collection
+     * add a value to the collection
      *
      * @param mixed $value
      *

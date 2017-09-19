@@ -3,7 +3,7 @@
 namespace Tests\SimpleCollection\Service;
 
 use PHPUnit\Framework\TestCase;
-use SimpleCollection\ArrayCollection;
+use SimpleCollection\ListCollection;
 use SimpleCollection\AssocCollection;
 use SimpleCollection\Base\ScCollection;
 use SimpleCollection\Service\Pagination\Paginator;
@@ -56,7 +56,7 @@ class PaginatorTest extends TestCase
      */
     public function testNegativePageException($iPage, $iItemsPerPage)
     {
-        $oPaginator = new Paginator(new ArrayCollection(), $iPage, $iItemsPerPage);
+        $oPaginator = new Paginator(new ListCollection(), $iPage, $iItemsPerPage);
         foreach ($oPaginator as $mItem) {
             echo 'should not happen';
         }
@@ -98,7 +98,7 @@ class PaginatorTest extends TestCase
     {
         $aTestCases = array();
         // ArrayCollection test
-        $oCollection = new ArrayCollection(array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+        $oCollection = new ListCollection(array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
 
         $aTestCases['pagePerItem'] = array(
             'oCollection'      => $oCollection,
@@ -136,7 +136,7 @@ class PaginatorTest extends TestCase
         );
 
         $aTestCases['1Page0Items'] = array(
-            'oCollection'      => new ArrayCollection(),
+            'oCollection'      => new ListCollection(),
             'iPage'            => 1,
             'iItemsPerPage'    => 15,
             'expectedItemKeys' => array()

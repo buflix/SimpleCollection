@@ -1,176 +1,31 @@
 <?php
 
-namespace Tests\SimpleCollection;
+namespace Tests\SimpleCollection\Base;
 
 use PHPUnit\Framework\TestCase;
-use SimpleCollection\AssocCollection;
-use SimpleCollection\Base\ScCollection;
+use SimpleCollection\Base\Collection;
 
 /**
- * AssocCollection Test
+ * Test of Collection
  *
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class AssocCollectionTest extends TestCase
+class CollectionTest extends TestCase
 {
 
     /**
-     * Object to test
-     *
-     * @var AssocCollection
+     * @var Collection
      */
     protected $object;
 
     /**
-     * Set the object to test
+     * Setup the testCase
      */
     public function setUp()
     {
         parent::setUp();
-        $this->object = new AssocCollection();
-    }
-
-    /**
-     * TestCase for empty Constructor
-     */
-    public function testEmptyConstructor()
-    {
-        $this->assertCount(0, $this->object);
-    }
-
-    /**
-     * Test current function
-     */
-    public function testCurrent()
-    {
-        $this->assertNull($this->object->current());
-
-        $this->object->offsetSet(0, 42);
-        $this->assertEquals(42, $this->object->current());
-
-        $this->object->offsetSet(1, 24);
-        $this->assertEquals(42, $this->object->current());
-
-        $this->assertEquals(24, $this->object->next());
-        $this->assertEquals(24, $this->object->current());
-    }
-
-    /**
-     * Test is valid
-     */
-    public function testValid()
-    {
-        $this->assertFalse($this->object->valid());
-
-        $this->object->offsetSet(0, 42);
-        $this->assertTrue($this->object->valid());
-
-        $this->assertFalse($this->object->next());
-        $this->assertFalse($this->object->valid());
-    }
-
-    /**
-     * Test next and prev
-     */
-    public function testNextAndPrev()
-    {
-        $this->assertFalse($this->object->next());
-        $this->assertFalse($this->object->prev());
-
-        $this->object->set(array(1, 2, 3));
-
-        $this->assertEquals(1, $this->object->current());
-        $this->assertFalse($this->object->prev());
-        $this->assertEquals(1, $this->object->rewind());
-        $this->assertEquals(2, $this->object->next());
-
-        $this->assertEquals(1, $this->object->rewind());
-        $this->assertEquals(2, $this->object->next());
-        $this->assertEquals(3, $this->object->next());
-
-        $this->assertFalse($this->object->next());
-        $this->assertEquals(ScCollection::NOT_SET_FLAG, $this->object->scNext());
-    }
-
-    /***
-     * Test scNext and scPrev
-     */
-    public function testScNextAndPrev()
-    {
-        $this->assertEquals(ScCollection::NOT_SET_FLAG, $this->object->scNext());
-        $this->assertEquals(ScCollection::NOT_SET_FLAG, $this->object->scPrev());
-
-        $this->object->set(array(1, false, true, 0, null, ''));
-
-        $this->assertEquals(ScCollection::NOT_SET_FLAG, $this->object->scPrev());
-
-        $this->assertEquals(1, $this->object->rewind());
-        $this->assertFalse($this->object->scNext());
-
-        $this->assertEquals(1, $this->object->scPrev());
-        $this->assertFalse($this->object->scNext());
-
-        $this->assertTrue($this->object->scNext());
-        $this->assertFalse($this->object->scPrev());
-
-        $this->assertTrue($this->object->scNext());
-        $this->assertEquals(0, $this->object->scNext());
-        $this->assertTrue($this->object->scPrev());
-
-        $this->assertEquals(0, $this->object->scNext());
-        $this->assertNull($this->object->scNext());
-
-        $this->assertEquals('', $this->object->scNext());
-        $this->assertNull($this->object->scPrev());
-
-        $this->assertEquals('', $this->object->scNext());
-        $this->assertEquals(ScCollection::NOT_SET_FLAG, $this->object->scNext());
-    }
-
-    /**
-     * Test key
-     */
-    public function testKey()
-    {
-        $this->assertNull($this->object->key());
-
-        $this->object->set(array(1, 2, false, null));
-
-        $this->assertEquals(0, $this->object->key());
-        $this->assertNull($this->object->end());
-
-        $this->assertEquals(3, $this->object->key());
-    }
-
-    /**
-     * Test if offsetExists in collection
-     */
-    public function testOffsetExists()
-    {
-        $this->assertFalse($this->object->offsetExists(0));
-
-        $this->object->set(array(1, 2, 3, 42, 'x'));
-
-        $this->assertTrue($this->object->offsetExists(0));
-        $this->assertTrue($this->object->offsetExists(1));
-        $this->assertTrue($this->object->offsetExists(2));
-        $this->assertTrue($this->object->offsetExists(3));
-        $this->assertTrue($this->object->offsetExists(4));
-        $this->assertFalse($this->object->offsetExists(5));
-    }
-
-    /**
-     * Test offsetGet
-     */
-    public function testOffsetGet()
-    {
-        $this->object->set(array(1, 2.0, 42, 'x'));
-
-        $this->assertEquals(1, $this->object->offsetGet(0));
-        $this->assertEquals(2.0, $this->object->offsetGet(1));
-        $this->assertEquals(42, $this->object->offsetGet(2));
-        $this->assertEquals('x', $this->object->offsetGet(3));
+        $this->object = new Collection();
     }
 
     /**
@@ -184,62 +39,6 @@ class AssocCollectionTest extends TestCase
         $this->object->offsetSet(3, '42');
         $this->assertEquals('42', $this->object->get(3));
         $this->assertEquals('42', $this->object->get(3, 44));
-    }
-
-    /**
-     * Test to set value by offset
-     */
-    public function testOffsetSet()
-    {
-        $this->assertInstanceOf(get_class($this->object), $this->object->offsetSet(12, 42));
-        $this->assertEquals(42, $this->object->get(12));
-        $this->assertInstanceOf(get_class($this->object), $this->object->offsetSet(12, 'x'));
-        $this->assertEquals('x', $this->object->get(12));
-
-        $this->assertInstanceOf(get_class($this->object), $this->object->offsetSet('', 'y'));
-        $this->assertEquals('y', $this->object->get(''));
-    }
-
-    /**
-     * Test exception on key = null
-     *
-     * @expectedException \InvalidArgumentException
-     * @dataProvider offsetSetExceptionProvider
-     *
-     * @param $mOffset
-     */
-    public function testOffsetSetException($mOffset)
-    {
-        $this->object->offsetSet($mOffset, 42);
-    }
-
-    /**
-     * Test to unset value by offset
-     */
-    public function testOffsetUnset()
-    {
-        $this->assertCount(0, $this->object);
-        $this->object->set(array('a', 'b', 'c'));
-
-        $this->assertInstanceOf(get_class($this->object), $this->object->offsetUnset(0));
-        $this->assertInstanceOf(get_class($this->object), $this->object->offsetUnset(2));
-
-        $this->assertNull($this->object->get(0));
-        $this->assertNull($this->object->get(2));
-        $this->assertEquals('b', $this->object->get(1));
-    }
-
-    /**
-     * Test to seek the pointer to given offset
-     */
-    public function testSeek()
-    {
-        $this->object->set(array(1, 2, 3, 4, 5, 'x'));
-        $this->assertEquals(3, $this->object->seek(2));
-        $this->assertEquals(2, $this->object->prev());
-        $this->assertEquals(4, $this->object->seek(3));
-        $this->assertEquals(5, $this->object->next());
-        $this->assertEquals('x', $this->object->seek(5));
     }
 
     /**
@@ -266,42 +65,49 @@ class AssocCollectionTest extends TestCase
      * Test to throw an exception if seek is bigger then offset
      *
      * @expectedException  \OutOfBoundsException
-     * @expectedExceptionMessage Invalid seek position: 6
-     */
-    public function testOutOfBoundsSeekException()
-    {
-        $this->object->set(array(1, 2, 3, 4, 5, 'x'));
-        $this->object->seek(6);
-    }
-
-    /**
-     * Test to throw an exception if seek is bigger then offset
-     *
-     * @expectedException  \OutOfBoundsException
      *
      * @dataProvider outOfBoundsProvider
      *
-     * @param array $aValues
-     * @param mixed $mSeekKey
-     * @param bool  $bStrict
+     * @param array $values
+     * @param mixed $seekKey
+     * @param bool  $strict
      */
-    public function testOutOfBoundsSeekToKeyException(array $aValues, $mSeekKey, $bStrict)
+    public function testOutOfBoundsSeekToKeyException(array $values, $seekKey, $strict)
     {
-        $this->object->set($aValues);
-        $this->object->seekToKey($mSeekKey, $bStrict);
+        $this->object->set($values);
+        $this->object->seekToKey($seekKey, $strict);
     }
 
     /**
-     * Test the isEmpty function
+     * Provider for testOutOfBoundsSeekToKeyException
+     *
+     * @return array
+     */
+    public function outOfBoundsProvider()
+    {
+        $aTestCases              = array();
+        $aTestCases['notStrict'] = array(
+            'aValues'  => array(1, 2, 3, 4),
+            'mSeekKey' => 4,
+            'bStrict'  => false
+        );
+        $aTestCases['strict']    = array(
+            'aValues'  => array(1, 2, 3, 4),
+            'mSeekKey' => '1',
+            'bStrict'  => true
+        );
+
+        return $aTestCases;
+    }
+
+    /**
+     * Test empty on collection
      */
     public function testIsEmpty()
     {
         $this->assertTrue($this->object->isEmpty());
-        $this->object->set(array(42));
+        $this->object->set([1,2,3,4]);
         $this->assertFalse($this->object->isEmpty());
-
-        $this->object->offsetUnset(0);
-        $this->assertTrue($this->object->isEmpty());
     }
 
     /**
@@ -319,6 +125,21 @@ class AssocCollectionTest extends TestCase
     }
 
     /**
+     * Test resetKeys
+     */
+    public function testResetKeys()
+    {
+        $params = $this->object->set([1 => 3, 3 => 7])
+            ->resetKeys()
+            ->getAll();
+
+        $this->assertArrayHasKey(0, $params);
+        $this->assertArrayHasKey(1, $params);
+        $this->assertArrayNotHasKey(3, $params);
+        $this->assertEquals(7, $this->object->get(1));
+    }
+
+    /**
      * Test to clear the collection
      */
     public function testClear()
@@ -333,7 +154,6 @@ class AssocCollectionTest extends TestCase
         $this->object->offsetSet(0, 42);
         $this->assertEquals(42, $this->object->current());
     }
-
     /**
      * Test to get keys from collections
      */
@@ -345,7 +165,6 @@ class AssocCollectionTest extends TestCase
             $this->object->getKeys()
         );
     }
-
     /**
      * @param array    $aValues
      * @param \Closure $cClosure
@@ -370,21 +189,39 @@ class AssocCollectionTest extends TestCase
     /**
      * Test to use an function for allElements
      */
+    public function testUpdateItems()
+    {
+        $this->object->set(array(1, 2, 3, 4, 5, 6));
+        $decreaseAllValues    = function ($key, $value) {
+            return $value - 1;
+        };
+        $increaseModTwoValues = function ($key, $value) {
+            return (0 === $key % 2) ? $value + 1 : $value;
+        };
+
+        $this->object->updateItems($decreaseAllValues);
+        $this->assertEquals(array(0, 1, 2, 3, 4, 5), $this->object->getAll());
+
+        $this->object->updateItems($increaseModTwoValues);
+        $this->assertEquals(array(1, 1, 3, 3, 5, 5), $this->object->getAll());
+    }
+
+    /**
+     * Test to use an function for allElements
+     */
     public function testForAll()
     {
         $this->object->set(array(1, 2, 3, 4, 5, 6));
-        $cDecreaseAllValues    = function ($iValue) {
-            return $iValue - 1;
-        };
-        $cIncreaseModTwoValues = function ($iValue, $iKey) {
-            return (0 === $iKey % 2) ? $iValue + 1 : $iValue;
+        $sumValues = $sumKeys = 0;
+        $summarize = function($key, $value) use (&$sumValues, &$sumKeys) {
+            $sumValues += $value;
+            $sumKeys += $key;
         };
 
-        $this->object->forAll($cDecreaseAllValues);
-        $this->assertEquals(array(0, 1, 2, 3, 4, 5), $this->object->getAll());
-
-        $this->object->forAll($cIncreaseModTwoValues);
-        $this->assertEquals(array(1, 1, 3, 3, 5, 5), $this->object->getAll());
+        $this->object->forAll($summarize);
+        $this->assertEquals(21, $sumValues);
+        $this->assertEquals(15, $sumKeys);
+        $this->assertEquals(array(1, 2, 3, 4, 5, 6), $this->object->getAll());
     }
 
     /**
@@ -587,43 +424,49 @@ class AssocCollectionTest extends TestCase
         return $aTestCases;
     }
 
+
     /**
-     * DataProvider for testOffsetSetException
-     *
-     * @return array
+     * Test magic get and set
      */
-    public function offsetSetExceptionProvider()
+    public function testMagicGetSet()
     {
-        $aTestCases = array();
-
-        $aTestCases['null']   = array('mOffset' => null);
-        $aTestCases['float']  = array('mOffset' => 2.5);
-        $aTestCases['bool']   = array('mOffset' => false);
-        $aTestCases['object'] = array('mOffset' => new \stdClass());
-
-        return $aTestCases;
+        $this->object->leet = 1337;
+        $this->assertEquals(1, $this->object->count());
+        $this->assertEquals(1337, $this->object->leet);
     }
 
     /**
-     * Provider for testOutOfBoundsSeekToKeyException
-     *
-     * @return array
+     * Test magic isset
      */
-    public function outOfBoundsProvider()
+    public function testMagicIsset()
     {
-        $aTestCases              = array();
-        $aTestCases['notStrict'] = array(
-            'aValues'  => array(1, 2, 3, 4),
-            'mSeekKey' => 4,
-            'bStrict'  => false
-        );
-        $aTestCases['strict']    = array(
-            'aValues'  => array(1, 2, 3, 4),
-            'mSeekKey' => '1',
-            'bStrict'  => true
-        );
+        $this->assertFalse(isset($this->object->something));
+        $this->object->something = 42;
 
-        return $aTestCases;
+        $this->assertTrue(isset($this->object->something));
+    }
+
+    /**
+     * Test magic unset
+     */
+    public function testMagicUnset()
+    {
+        $this->object->offsetSet(42, 'blafooo');
+        $this->assertCount(1, $this->object);
+
+        unset($this->object->{42});
+        $this->assertTrue($this->object->isEmpty());
+    }
+
+    /**
+     * Test to string method
+     */
+    public function testToString()
+    {
+        $this->object->set(['a' => 'foo', 'b' => 3, 42 => 'leet']);
+        $expected = '{"a":"foo","b":3,"42":"leet"}';
+
+        $this->assertSame($expected, (string) $this->object);
     }
 
 }

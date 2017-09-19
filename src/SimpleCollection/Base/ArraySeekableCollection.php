@@ -38,6 +38,20 @@ class ArraySeekableCollection implements \Countable, \SeekableIterator, \ArrayAc
     }
 
     /**
+     * Set all values
+     *
+     * @param array $values
+     *
+     * @return $this
+     */
+    public function set(array $values)
+    {
+        $this->values = $values;
+
+        return $this;
+    }
+
+    /**
      * seek the pointer to the offset position
      *
      * @param int $offset Seek position
@@ -93,13 +107,9 @@ class ArraySeekableCollection implements \Countable, \SeekableIterator, \ArrayAc
      * @param mixed      $value  ProxyServer
      *
      * @return $this
-     * @throws \InvalidArgumentException
      */
     public function offsetSet($offset, $value)
     {
-        if (!is_string($offset) && !is_integer($offset)) {
-            throw new \InvalidArgumentException('Invalid offset given: ' . gettype($offset));
-        }
         $this->values[$offset] = $value;
 
         return $this;
@@ -127,6 +137,16 @@ class ArraySeekableCollection implements \Countable, \SeekableIterator, \ArrayAc
     public function next()
     {
         return next($this->values);
+    }
+
+    /**
+     * rewind the pointer for one position
+     *
+     * @return mixed|false
+     */
+    public function prev()
+    {
+        return prev($this->values);
     }
 
     /**
@@ -165,6 +185,16 @@ class ArraySeekableCollection implements \Countable, \SeekableIterator, \ArrayAc
     public function rewind()
     {
         return reset($this->values);
+    }
+
+    /**
+     * return the last element in collection
+     *
+     * @return mixed|false
+     */
+    public function end()
+    {
+        return end($this->values);
     }
 
     /**
