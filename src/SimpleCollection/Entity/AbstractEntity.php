@@ -21,7 +21,7 @@ abstract class AbstractEntity implements EntityInterface
         $aReturn = array();
 
         foreach (get_object_vars($this) as $sKey => $mValue) {
-            if ($mValue instanceof EntityInterface or true === method_exists($mValue, 'toArray')) {
+            if (is_object($mValue) and true === method_exists($mValue, 'toArray')) {
                 $aReturn[$sKey] = $mValue->toArray();
             } else {
                 $aReturn[$sKey] = $mValue;
