@@ -2,6 +2,7 @@
 
 namespace Tests\SimpleCollection\Entity;
 
+use PHPUnit\Framework\TestCase;
 use SimpleCollection\Entity\EntityAssocCollection;
 
 /**
@@ -10,7 +11,7 @@ use SimpleCollection\Entity\EntityAssocCollection;
  * @package Tests\SimpleCollection\Entity
  * @author  Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class EntityAssocCollectionTest extends \PHPUnit_Framework_TestCase
+class EntityAssocCollectionTest extends TestCase
 {
 
     /**
@@ -166,4 +167,32 @@ class EntityAssocCollectionTest extends \PHPUnit_Framework_TestCase
         $oMock = $this->getMock('SimpleCollection\Entity\EntityInterface');
         $this->object->add($oMock);
     }
+
+    /**
+     * Test offSetSet
+     */
+    public function testKeyExists()
+    {
+        $this->object->offsetSet('a', new DummyEntity('xxx'));
+        $this->object->offsetSet('b', new DummyEntity('xxx'));
+        $this->object->offsetSet('c', new DummyEntity('xxx'));
+        $this->assertTrue($this->object->contains(function($entity, $key) {
+            return $key === 'b';
+        }));
+    }
+
+    /**
+     * Test offSetSet
+     */
+    public function testKeyNotExists()
+    {
+        $this->object->offsetSet('a', new DummyEntity('xxx'));
+        $this->object->offsetSet('b', new DummyEntity('xxx'));
+        $this->object->offsetSet('c', new DummyEntity('xxx'));
+
+        $this->assertFalse($this->object->contains(function($entity, $key) {
+            return $key === 'z';
+        }));
+    }
+
 }

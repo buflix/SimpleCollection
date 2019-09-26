@@ -2,6 +2,7 @@
 
 namespace Tests\SimpleCollection;
 
+use PHPUnit\Framework\TestCase;
 use SimpleCollection\AbstractCollection;
 use SimpleCollection\AssocCollection;
 
@@ -11,7 +12,7 @@ use SimpleCollection\AssocCollection;
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class AssocCollectionTest extends \PHPUnit_Framework_TestCase
+class AssocCollectionTest extends TestCase
 {
 
     /**
@@ -449,6 +450,52 @@ class AssocCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($oBackup, $this->object);
         $this->assertInstanceOf(get_class($this->object), $oResult);
         $this->assertEquals($aExpectedResult, $oResult->getAll());
+    }
+
+    /**
+     * Test contain func on value
+     */
+    public function testContainIsEven()
+    {
+        $this->object->set([1, 3, 4, 5]);
+        $this->assertTrue($this->object->contains(function ($value) {
+            return ($value % 2) === 0;
+        }));
+    }
+
+    /**
+     * Test contain func false on value
+     */
+    public function testContainStringContains()
+    {
+        $this->object->set(['banana', 'wow', 'lol']);
+        $this->assertFalse($this->object->contains(function ($value) {
+            return ($value === 'cs:go');
+        }));
+    }
+
+    /**
+     * Test contain func on key
+     */
+    public function testContainsKey()
+    {
+        $this->object->set([1 => 1, 3 => 3, 6 => 4, 8 => 5]);
+        $this->assertTrue($this->object->contains(function ($value, $key) {
+            $this->assertTrue($key < 9);
+            return ($key % 6) === 0;
+        }));
+    }
+
+    /**
+     * Test contain func on key
+     */
+    public function testNotContainsKey()
+    {
+        $this->object->set([0 => 1, 3 => 3, 6 => 4, 8 => 5]);
+
+        $this->assertFalse($this->object->contains(function ($value, $key) {
+            return ($key === 2);
+        }));
     }
 
 

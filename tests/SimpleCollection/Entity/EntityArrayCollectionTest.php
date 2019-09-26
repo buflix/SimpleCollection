@@ -2,6 +2,7 @@
 
 namespace Tests\SimpleCollection\Entity;
 
+use PHPUnit\Framework\TestCase;
 use SimpleCollection\Entity\EntityArrayCollection;
 
 /**
@@ -10,7 +11,7 @@ use SimpleCollection\Entity\EntityArrayCollection;
  * @package Tests\SimpleCollection\Entity
  * @author  Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class EntityArrayCollectionTest extends \PHPUnit_Framework_TestCase
+class EntityArrayCollectionTest extends TestCase
 {
 
     /**
@@ -124,5 +125,41 @@ class EntityArrayCollectionTest extends \PHPUnit_Framework_TestCase
     public function testCheckClass()
     {
         $this->object->add(new \stdClass());
+    }
+
+    /**
+     * Test to add new entity to collection
+     */
+    public function testContains()
+    {
+        $this->object->add(new DummyEntity(42));
+        $this->object->add(new DummyEntity(66));
+        $this->object->add(new DummyEntity(90));
+
+        $this->assertTrue($this->object->contains(function ($entity, $key) {
+            /**
+             * @var DummyEntity $entity
+             */
+            $this->assertTrue($key < 3);
+            return $entity->getIndex() === 66;
+        }));
+    }
+
+    /**
+     * Test to add new entity to collection
+     */
+    public function testNotContains()
+    {
+        $this->object->add(new DummyEntity(42));
+        $this->object->add(new DummyEntity(66));
+        $this->object->add(new DummyEntity(90));
+
+        $this->assertFalse($this->object->contains(function ($entity, $key) {
+            /**
+             * @var DummyEntity $entity
+             */
+            $this->assertTrue($key < 3);
+            return $entity->getIndex() === 2;
+        }));
     }
 }
