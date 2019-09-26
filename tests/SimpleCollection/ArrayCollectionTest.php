@@ -99,6 +99,17 @@ class ArrayCollectionTest extends AssocCollectionTest
         $this->assertFalse($this->object->offsetExists($iValueCount + 1));
     }
 
+    /**
+     * Test contain func on key
+     */
+    public function testNotContainsKey()
+    {
+        $this->object->set([0 => 1, 3 => 3, 6 => 4, 8 => 5]);
+
+        $this->assertTrue($this->object->contains(function ($value, $key) {
+            return ($key === 2);
+        }));
+    }
 
     /**
      * Test json serialize

@@ -2,6 +2,7 @@
 
 namespace Tests\SimpleCollection\Service;
 
+use PHPUnit\Framework\TestCase;
 use SimpleCollection\AbstractCollection;
 use SimpleCollection\ArrayCollection;
 use SimpleCollection\AssocCollection;
@@ -13,7 +14,7 @@ use SimpleCollection\Service\Pagination\Paginator;
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-class PaginatorTest extends \PHPUnit_Framework_TestCase
+class PaginatorTest extends TestCase
 {
 
     /**

@@ -414,6 +414,23 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
     }
 
     /**
+     * Check if collection contains an item that fulfill the callback condition
+     *
+     * @param callable $callable
+     *
+     * @return bool
+     */
+    public function contains(callable $callable)
+    {
+        foreach ($this->values as $key => $value) {
+            if (true === $callable($value, $key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @see \JsonSerializable
      *
      * @return array
