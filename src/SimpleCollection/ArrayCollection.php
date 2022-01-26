@@ -14,24 +14,24 @@ class ArrayCollection extends AbstractCollection
     /**
      * ArrayCollection constructor.
      *
-     * @param array $aValues
+     * @param array $values
      */
-    public function __construct(array $aValues = array())
+    public function __construct(array $values = [])
     {
-        parent::__construct($aValues);
+        parent::__construct($values);
         $this->resetKeys();
     }
 
     /**
-     * add a entity to the collection
+     * add an entity to the collection
      *
-     * @param mixed $mValue
+     * @param mixed $value
      *
      * @return $this
      */
-    public function add($mValue)
+    public function add(mixed $value): static
     {
-        $this->values[] = $mValue;
+        $this->values[] = $value;
 
         return $this;
     }
@@ -39,13 +39,13 @@ class ArrayCollection extends AbstractCollection
     /**
      * Set all values and reset keys
      *
-     * @param array $aValues
+     * @param array $values
      *
      * @return $this
      */
-    public function set(array $aValues)
+    public function set(array $values): static
     {
-        parent::set($aValues);
+        parent::set($values);
 
         return $this->resetKeys();
     }

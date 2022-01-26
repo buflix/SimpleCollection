@@ -15,5 +15,5 @@ interface AssocEntityInterface extends EntityInterface
      *
      * @return string|integer
      */
-    public function getCollectionIndex();
+    public function getCollectionIndex(): int|string;
 }

@@ -2,6 +2,7 @@
 
 namespace Tests\SimpleCollection\Entity;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use SimpleCollection\Entity\EntityArrayCollection;
 
@@ -24,7 +25,7 @@ class EntityArrayCollectionTest extends TestCase
     /**
      * Setup the object to test
      */
-    public function setUp()
+    public function setUp():void
     {
         parent::setUp();
         $this->object = new EntityArrayCollection();
@@ -118,12 +119,11 @@ class EntityArrayCollectionTest extends TestCase
 
     /**
      * Test exception if not entityInterface instance given
-     *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Expect entity of class \SimpleCollection\Entity\EntityInterface
      */
     public function testCheckClass()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Expect entity of class \SimpleCollection\Entity\EntityInterface');
         $this->object->add(new \stdClass());
     }
 

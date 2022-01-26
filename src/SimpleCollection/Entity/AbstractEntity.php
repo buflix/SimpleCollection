@@ -1,5 +1,8 @@
 <?php
+
 namespace SimpleCollection\Entity;
+
+use JsonSerializable;
 
 /**
  * abstract entity
@@ -7,36 +10,36 @@ namespace SimpleCollection\Entity;
  * @copyright Felix Buchheim
  * @author    Felix Buchheim <hanibal4nothing@gmail.com>
  */
-abstract class AbstractEntity implements EntityInterface, \JsonSerializable
+abstract class AbstractEntity implements EntityInterface, JsonSerializable
 {
 
     /**
      * return this entity as array
      *
-     * @see EntityInterface::toArray
      * @return array
+     * @see EntityInterface::toArray
      */
-    public function toArray()
+    public function toArray(): array
     {
-        $aReturn = array();
+        $values = [];
 
-        foreach (get_object_vars($this) as $sKey => $mValue) {
-            if (is_object($mValue) and true === method_exists($mValue, 'toArray')) {
-                $aReturn[$sKey] = $mValue->toArray();
+        foreach (get_object_vars($this) as $key => $value) {
+            if (is_object($value) and true === method_exists($value, 'toArray')) {
+                $values[$key] = $value->toArray();
             } else {
-                $aReturn[$sKey] = $mValue;
+                $values[$key] = $value;
             }
         }
 
-        return $aReturn;
+        return $values;
     }
 
     /**
-     * @see \JsonSerializable
-     *
      * @return array
+     * @see \JsonSerializable
      */
-    public function jsonSerialize()
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

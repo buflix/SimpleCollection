@@ -4,6 +4,7 @@ namespace Tests\SimpleCollection\Entity;
 
 use PHPUnit\Framework\TestCase;
 use SimpleCollection\Entity\EntityAssocCollection;
+use SimpleCollection\Entity\EntityInterface;
 
 /**
  * EntityAssocCollectionTest
@@ -24,7 +25,7 @@ class EntityAssocCollectionTest extends TestCase
     /**
      * Setup the object to test
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->object = new EntityAssocCollection();
@@ -159,12 +160,11 @@ class EntityAssocCollectionTest extends TestCase
 
     /**
      * Test check class exception
-     *
-     * @expectedException \InvalidArgumentException
      */
     public function testCheckClassException()
     {
-        $oMock = $this->getMock('SimpleCollection\Entity\EntityInterface');
+        $this->expectException(\InvalidArgumentException::class);
+        $oMock = $this->createMock(EntityInterface::class);
         $this->object->add($oMock);
     }
 

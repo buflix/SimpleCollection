@@ -23,7 +23,7 @@ class ArrayCollectionTest extends AssocCollectionTest
     /**
      * Set the object to test
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->object = new ArrayCollection();
@@ -48,7 +48,7 @@ class ArrayCollectionTest extends AssocCollectionTest
      */
     public function testResetValuesOnSet()
     {
-        $this->object->set(array(2 => 42, '3' => 'mc', '4' => 'ab'));
+        $this->object->set([2 => 42, '3' => 'mc', '4' => 'ab']);
 
         $this->assertEquals(42, $this->object->offsetGet(0));
         $this->assertEquals('mc', $this->object->offsetGet(1));
@@ -61,9 +61,9 @@ class ArrayCollectionTest extends AssocCollectionTest
      */
     public function testGetKeys()
     {
-        $this->object->set(array('x' => 2.5, '3' => 'bla', 0 => 2));
+        $this->object->set(['x' => 2.5, '3' => 'bla', 0 => 2]);
         $this->assertEquals(
-            array(0, 1, 2),
+            [0, 1, 2],
             $this->object->getKeys()
         );
     }
@@ -72,7 +72,7 @@ class ArrayCollectionTest extends AssocCollectionTest
      * TestConstructor
      *
      * @param array $aValues
-     * @param int   $iAssertCount
+     * @param int $iAssertCount
      *
      * @dataProvider constructProvider
      */
@@ -86,7 +86,7 @@ class ArrayCollectionTest extends AssocCollectionTest
      * Check to reset keys on construct
      *
      * @param array $aValues
-     * @param int   $iValueCount
+     * @param int $iValueCount
      *
      * @dataProvider constructProvider
      */
@@ -120,7 +120,7 @@ class ArrayCollectionTest extends AssocCollectionTest
         $this->assertTrue(is_array($empty));
         $this->assertEmpty($empty);
 
-        $this->object->set([1,2,3]);
+        $this->object->set([1, 2, 3]);
         $json = $this->object->jsonSerialize();
         $this->assertTrue(is_array($json));
         $this->assertArrayHasKey(0, $json);
@@ -134,9 +134,9 @@ class ArrayCollectionTest extends AssocCollectionTest
      *
      * @return array
      */
-    public function filterProvider()
+    public function filterProvider(): array
     {
-        $aTestCases = array();
+        $aTestCases = [];
         $cModuloTwo = function ($value) {
             return ($value % 2 === 0);
         };
@@ -145,23 +145,23 @@ class ArrayCollectionTest extends AssocCollectionTest
             return ($key > 1);
         };
 
-        $aTestCases['oneElementNullFiltered'] = array(
-            'aValues'         => array(1),
-            'cClosure'        => $cModuloTwo,
-            'aExpectedResult' => array()
-        );
+        $aTestCases['oneElementNullFiltered'] = [
+            'aValues' => [1],
+            'cClosure' => $cModuloTwo,
+            'aExpectedResult' => []
+        ];
 
-        $aTestCases['oneElementOneFiltered'] = array(
-            'aValues'         => array(2),
-            'cClosure'        => $cModuloTwo,
-            'aExpectedResult' => array(2)
-        );
+        $aTestCases['oneElementOneFiltered'] = [
+            'aValues' => [2],
+            'cClosure' => $cModuloTwo,
+            'aExpectedResult' => [2]
+        ];
 
-        $aTestCases['oneIsBiggerThenOne'] = array(
-            'aValues'         => array(1, 2, 'x' => 3),
-            'cClosure'        => $cKeyIsBiggerThenOne,
-            'aExpectedResult' => array(3)
-        );
+        $aTestCases['oneIsBiggerThenOne'] = [
+            'aValues' => [1, 2, 'x' => 3],
+            'cClosure' => $cKeyIsBiggerThenOne,
+            'aExpectedResult' => [3]
+        ];
 
         return $aTestCases;
     }
@@ -173,138 +173,139 @@ class ArrayCollectionTest extends AssocCollectionTest
      */
     public function constructProvider()
     {
-        $aTestCases                   = array();
-        $aTestCases['emptyArray']     = array(
-            'aValues'      => array(),
+        $aTestCases = [];
+        $aTestCases['emptyArray'] = [
+            'aValues' => [],
             'iAssertCount' => 0
-        );
-        $aTestCases['oneValue']       = array(
-            'aValues'      => array(42),
+        ];
+        $aTestCases['oneValue'] = [
+            'aValues' => [42],
             'iAssertCount' => 1
-        );
-        $aTestCases['multipleValues'] = array(
-            'aValues'      => array(42, 'x', 'abc'),
+        ];
+        $aTestCases['multipleValues'] = [
+            'aValues' => [42, 'x', 'abc'],
             'iAssertCount' => 3
-        );
-        $aTestCases['indexValues']    = array(
-            'aValues'      => array('a' => 42, 2 => 'x', '3' => 'abc'),
+        ];
+        $aTestCases['indexValues'] = [
+            'aValues' => ['a' => 42, 2 => 'x', '3' => 'abc'],
             'iAssertCount' => 3
-        );
+        ];
 
         return $aTestCases;
     }
+
     /**
      * Dataprovider for AssocCollectionTest::testSliceByKey
      *
      * @return array
      */
-    public function sliceByKeyProvider()
+    public function sliceByKeyProvider(): array
     {
-        $aTestCases = array();
+        $aTestCases = [];
 
-        $aTestCases['emptyCollection'] = array(
-            'aValues'         => array(),
-            'mKey'            => 0,
-            'bStrict'         => false,
-            'iLength'         => 1,
-            'aExpectedResult' => array()
-        );
+        $aTestCases['emptyCollection'] = [
+            'aValues' => [],
+            'mKey' => 0,
+            'bStrict' => false,
+            'iLength' => 1,
+            'aExpectedResult' => []
+        ];
 
-        $aTestCases['simpleSlice'] = array(
-            'aValues'         => array(0 => 1),
-            'mKey'            => 0,
-            'bStrict'         => false,
-            'iLength'         => 1,
-            'aExpectedResult' => array(0 => 1)
-        );
+        $aTestCases['simpleSlice'] = [
+            'aValues' => [0 => 1],
+            'mKey' => 0,
+            'bStrict' => false,
+            'iLength' => 1,
+            'aExpectedResult' => [0 => 1]
+        ];
 
-        $aTestCases['keyNotExists'] = array(
-            'aValues'         => array(0 => 1),
-            'mKey'            => 3,
-            'bStrict'         => false,
-            'iLength'         => 1,
-            'aExpectedResult' => array()
-        );
+        $aTestCases['keyNotExists'] = [
+            'aValues' => [0 => 1],
+            'mKey' => 3,
+            'bStrict' => false,
+            'iLength' => 1,
+            'aExpectedResult' => []
+        ];
 
-        $aTestCases['keyIsNull'] = array(
-            'aValues'         => array(1, 2, 3),
-            'mKey'            => null,
-            'bStrict'         => false,
-            'iLength'         => 1,
-            'aExpectedResult' => array(1)
-        );
+        $aTestCases['keyIsNull'] = [
+            'aValues' => [1, 2, 3],
+            'mKey' => null,
+            'bStrict' => false,
+            'iLength' => 1,
+            'aExpectedResult' => [1]
+        ];
 
-        $aTestCases['keyIsNull2'] = array(
-            'aValues'         => array(1, 2, 3),
-            'mKey'            => null,
-            'bStrict'         => false,
-            'iLength'         => 2,
-            'aExpectedResult' => array(1, 2)
-        );
+        $aTestCases['keyIsNull2'] = [
+            'aValues' => [1, 2, 3],
+            'mKey' => null,
+            'bStrict' => false,
+            'iLength' => 2,
+            'aExpectedResult' => [1, 2]
+        ];
 
-        $aTestCases['findWithStrict'] = array(
-            'aValues'         => array(1, 2, 3),
-            'mKey'            => 1,
-            'bStrict'         => true,
-            'iLength'         => 2,
-            'aExpectedResult' => array(2, 3)
-        );
+        $aTestCases['findWithStrict'] = [
+            'aValues' => [1, 2, 3],
+            'mKey' => 1,
+            'bStrict' => true,
+            'iLength' => 2,
+            'aExpectedResult' => [2, 3]
+        ];
 
-        $aTestCases['notFindWithStrict'] = array(
-            'aValues'         => array(1, 2, 3),
-            'mKey'            => '1',
-            'bStrict'         => true,
-            'iLength'         => 2,
-            'aExpectedResult' => array()
-        );
+        $aTestCases['notFindWithStrict'] = [
+            'aValues' => [1, 2, 3],
+            'mKey' => '1',
+            'bStrict' => true,
+            'iLength' => 2,
+            'aExpectedResult' => []
+        ];
 
-        $aTestCases['findWithoutStrict'] = array(
-            'aValues'         => array(1, 2, 3),
-            'mKey'            => '1',
-            'bStrict'         => false,
-            'iLength'         => 2,
-            'aExpectedResult' => array(2, 3)
-        );
+        $aTestCases['findWithoutStrict'] = [
+            'aValues' => [1, 2, 3],
+            'mKey' => '1',
+            'bStrict' => false,
+            'iLength' => 2,
+            'aExpectedResult' => [2, 3]
+        ];
 
-        $aTestCases['sliceExample'] = array(
-            'aValues'         => array('a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5),
-            'mKey'            => 1,
-            'bStrict'         => true,
-            'iLength'         => 2,
-            'aExpectedResult' => array(2, 3)
-        );
+        $aTestCases['sliceExample'] = [
+            'aValues' => ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5],
+            'mKey' => 1,
+            'bStrict' => true,
+            'iLength' => 2,
+            'aExpectedResult' => [2, 3]
+        ];
 
-        $aTestCases['lengthOfNull'] = array(
-            'aValues'         => array('a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5),
-            'mKey'            => 1,
-            'bStrict'         => false,
-            'iLength'         => 0,
-            'aExpectedResult' => array()
-        );
+        $aTestCases['lengthOfNull'] = [
+            'aValues' => ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5],
+            'mKey' => 1,
+            'bStrict' => false,
+            'iLength' => 0,
+            'aExpectedResult' => []
+        ];
 
-        $aTestCases['lengthOfOne'] = array(
-            'aValues'         => array('a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5),
-            'mKey'            => 1,
-            'bStrict'         => true,
-            'iLength'         => 1,
-            'aExpectedResult' => array(2)
-        );
+        $aTestCases['lengthOfOne'] = [
+            'aValues' => ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5],
+            'mKey' => 1,
+            'bStrict' => true,
+            'iLength' => 1,
+            'aExpectedResult' => [2]
+        ];
 
-        $aTestCases['negativeLength'] = array(
-            'aValues'         => array('a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5),
-            'mKey'            => 1,
-            'bStrict'         => false,
-            'iLength'         => -1,
-            'aExpectedResult' => array()
-        );
+        $aTestCases['negativeLength'] = [
+            'aValues' => ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5],
+            'mKey' => 1,
+            'bStrict' => false,
+            'iLength' => -1,
+            'aExpectedResult' => []
+        ];
 
-        $aTestCases['maxLength'] = array(
-            'aValues'         => array('a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5),
-            'mKey'            => 2,
-            'bStrict'         => true,
-            'iLength'         => PHP_INT_MAX,
-            'aExpectedResult' => array(3, 4, 5)
-        );
+        $aTestCases['maxLength'] = [
+            'aValues' => ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5],
+            'mKey' => 2,
+            'bStrict' => true,
+            'iLength' => PHP_INT_MAX,
+            'aExpectedResult' => [3, 4, 5]
+        ];
 
         return $aTestCases;
     }

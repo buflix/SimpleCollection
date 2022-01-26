@@ -63,9 +63,9 @@ class DummyEntity extends AbstractEntity implements AssocEntityInterface
     }
 
     /**
-     * @return mixed
+     * @return int|string
      */
-    public function getCollectionIndex()
+    public function getCollectionIndex(): int|string
     {
         return $this->getIndex();
     }
