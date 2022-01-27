@@ -2,6 +2,7 @@
 
 namespace Tests\SimpleCollection\Service;
 
+use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 use SimpleCollection\AbstractCollection;
 use SimpleCollection\ArrayCollection;
@@ -51,11 +52,11 @@ class PaginatorTest extends TestCase
      * @param int $iItemsPerPage
      *
      * @dataProvider             negativePageProvider
-     * @expectedException \OutOfBoundsException
-     * @expectedExceptionMessage Start index cant no be lower then 1
      */
     public function testNegativePageException($iPage, $iItemsPerPage)
     {
+        $this->expectException(OutOfBoundsException::class);
+        $this->expectExceptionMessage('Start index cant no be lower then 1');
         $oPaginator = new Paginator(new ArrayCollection(), $iPage, $iItemsPerPage);
         foreach ($oPaginator as $mItem) {
             echo 'does not happen';

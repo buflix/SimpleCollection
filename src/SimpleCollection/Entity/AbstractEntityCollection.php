@@ -1,6 +1,8 @@
 <?php
+
 namespace SimpleCollection\Entity;
 
+use InvalidArgumentException;
 use SimpleCollection\AbstractCollection;
 
 /**
@@ -18,43 +20,38 @@ abstract class AbstractEntityCollection extends AbstractCollection implements En
      * set the values
      * use the offsetSet to check the type
      *
-     * @param EntityInterface[] $aEntities
+     * @param EntityInterface[] $entities
      */
-    public function __construct(array $aEntities = array())
+    public function __construct(array $entities = [])
     {
-        $this->checkClasses($aEntities);
-        parent::__construct($aEntities);
+        parent::__construct($entities);
     }
 
     /**
      * set the entity by the given offset
      *
-     * @param string|int      $mOffset Offset
-     * @param EntityInterface $oEntity ProxyServer
+     * @param string|int|null $offset Offset
+     * @param EntityInterface $value ProxyServer
      *
      * @return $this
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    public function offsetSet($mOffset, $oEntity)
+    public function offsetSet($offset, mixed $value): static
     {
-        $this->checkClass($oEntity);
-
-        return parent::offsetSet($mOffset, $oEntity);
+        return parent::offsetSet($offset, $value);
     }
 
     /**
      * Set all entities
      *
-     * @param EntityInterface[] $aEntities
+     * @param EntityInterface[] $values
      *
      * @return $this
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    public function set(array $aEntities)
+    public function set(array $values): static
     {
-        $this->checkClasses($aEntities);
-
-        return parent::set($aEntities);
+        return parent::set($values);
     }
 
     /**
@@ -62,73 +59,37 @@ abstract class AbstractEntityCollection extends AbstractCollection implements En
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
-        $aReturn = array();
+        $values = [];
 
-        foreach ($this->values as $sKey => $oEntity) {
-            /* @var EntityInterface $oEntity */
-            $aReturn[$sKey] = $oEntity->toArray();
+        foreach ($this->values as $key => $entity) {
+            /* @var EntityInterface $entity */
+            $values[$key] = $entity->toArray();
         }
 
-        return $aReturn;
-    }
-
-    /**
-     * Check all classes of given array
-     *
-     * @param EntityInterface[] $aEntities
-     *
-     * @return $this
-     * @throws \InvalidArgumentException
-     */
-    public function checkClasses(array $aEntities)
-    {
-        foreach ($aEntities as $oEntity) {
-            $this->checkClass($oEntity);
-        }
-
-        return $this;
+        return $values;
     }
 
     /**
      * Add Entity to collection
      *
-     * @param EntityInterface $oEntity
+     * @param EntityInterface $entity
      *
      * @return $this
      */
-    public function add($oEntity)
+    public function add(EntityInterface $entity): static
     {
-        $this->checkClass($oEntity);
-        $this->values[] = $oEntity;
+        $this->values[] = $entity;
 
         return $this;
     }
 
     /**
-     * Check if the given object is class of EntityInterface
-     *
-     * @param EntityInterface $oEntity
-     *
-     * @return $this
-     * @throws \InvalidArgumentException
-     */
-    protected function checkClass($oEntity)
-    {
-        if (false === $oEntity instanceof EntityInterface) {
-            throw new \InvalidArgumentException('Expect entity of class \SimpleCollection\Entity\EntityInterface');
-        }
-
-        return $this;
-    }
-
-    /**
+     * @return mixed
      * @see \JsonSerializable
-     *
-     * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }

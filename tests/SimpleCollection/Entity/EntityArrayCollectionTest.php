@@ -2,8 +2,10 @@
 
 namespace Tests\SimpleCollection\Entity;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use SimpleCollection\Entity\EntityArrayCollection;
+use TypeError;
 
 /**
  * EntityArrayCollectionTest
@@ -19,12 +21,12 @@ class EntityArrayCollectionTest extends TestCase
      *
      * @var EntityArrayCollection
      */
-    protected $object;
+    protected EntityArrayCollection $object;
 
     /**
      * Setup the object to test
      */
-    public function setUp()
+    public function setUp():void
     {
         parent::setUp();
         $this->object = new EntityArrayCollection();
@@ -118,12 +120,11 @@ class EntityArrayCollectionTest extends TestCase
 
     /**
      * Test exception if not entityInterface instance given
-     *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Expect entity of class \SimpleCollection\Entity\EntityInterface
      */
     public function testCheckClass()
     {
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage('SimpleCollection\Entity\AbstractEntityCollection::add(): Argument #1 ($entity) must be of type SimpleCollection\Entity\EntityInterface, stdClass given');
         $this->object->add(new \stdClass());
     }
 

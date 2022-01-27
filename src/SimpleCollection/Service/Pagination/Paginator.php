@@ -2,6 +2,7 @@
 
 namespace SimpleCollection\Service\Pagination;
 
+use OutOfBoundsException;
 use SimpleCollection\AbstractCollection;
 
 /**
@@ -16,70 +17,69 @@ class Paginator implements \Countable, \IteratorAggregate
     /**
      * Collection to pagination
      *
-     * @var PaginationCollectionInterface
+     * @var AbstractCollection
      */
-    protected $collection;
+    protected AbstractCollection $collection;
 
     /**
      * Index of first result
      *
      * @var int
      */
-    protected $page;
+    protected int $page;
 
     /**
      * Amount of results
      *
      * @var int
      */
-    protected $itemsPerPage;
+    protected int $itemsPerPage;
 
     /**
      * Paginator constructor.
      *
-     * @param PaginationCollectionInterface $oCollection
-     * @param int                $iPage
-     * @param int                $iItemsPerPage
+     * @param AbstractCollection $collection
+     * @param int $page
+     * @param int $itemsPerPage
      */
-    public function __construct(PaginationCollectionInterface $oCollection, $iPage = 1, $iItemsPerPage = 10)
+    public function __construct(AbstractCollection $collection, int $page = 1, int $itemsPerPage = 10)
     {
-        $this->collection   = $oCollection;
-        $this->page         = $iPage;
-        $this->itemsPerPage = $iItemsPerPage;
+        $this->collection   = $collection;
+        $this->page         = $page;
+        $this->itemsPerPage = $itemsPerPage;
     }
 
     /**
      * @see \IteratorAggregate
      *
-     * @return AbstractCollection
-     * @throws \OutOfBoundsException
+     * @throws OutOfBoundsException
      */
-    public function getIterator()
+    public function getIterator(): AbstractCollection
     {
-        $aResult = array();
-        $iStart  = ($this->itemsPerPage * ($this->page - 1));
-        if ($iStart < 0) {
-            throw new \OutOfBoundsException('Start index cant no be lower then 1');
+        $result = array();
+        $start  = ($this->itemsPerPage * ($this->page - 1));
+        if ($start < 0) {
+            throw new OutOfBoundsException('Start index cant no be lower then 1');
         }
         try {
-            $iRestOfResults                    = ($this->itemsPerPage - 1);
-            $mFirstValues                      = $this->collection->seek($iStart);
-            $aResult[$this->collection->key()] = $mFirstValues;
-            while ($iRestOfResults > 0) {
-                $mValue = $this->collection->scNext();
-                if ($mValue === AbstractCollection::NOT_SET_FLAG) {
-                    throw new \OutOfBoundsException();
+            $restOfResults                    = ($this->itemsPerPage - 1);
+            $firstValues                      = $this->collection->seek($start);
+            $result[$this->collection->key()] = $firstValues;
+            while ($restOfResults > 0) {
+                $value = $this->collection->scNext();
+                if ($value === AbstractCollection::NOT_SET_FLAG) {
+                    throw new OutOfBoundsException();
                 }
-                $aResult[$this->collection->key()] = $mValue;
-                $iRestOfResults--;
+                $result[$this->collection->key()] = $value;
+                $restOfResults--;
             }
 
-        } catch (\OutOfBoundsException $oException) {
+        } catch (OutOfBoundsException) {
             // do nothing, this exception is not critical
         }
-        $sClassName = get_class($this->collection);
+        $className = get_class($this->collection);
 
-        return new $sClassName($aResult);
+        return new $className($result);
     }
 
     /**
@@ -87,7 +87,7 @@ class Paginator implements \Countable, \IteratorAggregate
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->getIterator());
     }
@@ -95,7 +95,7 @@ class Paginator implements \Countable, \IteratorAggregate
     /**
      * @return int
      */
-    public function fetchPageCount()
+    public function fetchPageCount(): int
     {
         return (int) ceil($this->collection->count() / $this->itemsPerPage);
     }
@@ -105,7 +105,7 @@ class Paginator implements \Countable, \IteratorAggregate
      *
      * @return int
      */
-    public function getFirstResult()
+    public function getFirstResult(): int
     {
         return $this->page;
     }
@@ -113,11 +113,11 @@ class Paginator implements \Countable, \IteratorAggregate
     /**
      * The setter function for the property <em>$firstResult</em>.
      *
-     * @param  int $firstResult
+     * @param int $firstResult
      *
      * @return $this Returns the instance of this class.
      */
-    public function setFirstResult($firstResult)
+    public function setFirstResult(int $firstResult): static
     {
         $this->page = $firstResult;
 
@@ -129,7 +129,7 @@ class Paginator implements \Countable, \IteratorAggregate
      *
      * @return int
      */
-    public function getMaxResult()
+    public function getMaxResult(): int
     {
         return $this->itemsPerPage;
     }
@@ -137,11 +137,11 @@ class Paginator implements \Countable, \IteratorAggregate
     /**
      * The setter function for the property <em>$maxResult</em>.
      *
-     * @param  int $maxResult
+     * @param int $maxResult
      *
      * @return $this Returns the instance of this class.
      */
-    public function setMaxResult($maxResult)
+    public function setMaxResult(int $maxResult): static
     {
         $this->itemsPerPage = $maxResult;
 

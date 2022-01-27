@@ -14,30 +14,30 @@ interface PaginationCollectionInterface
     /**
      * Seek the pointer to the offset position
      *
-     * @param mixed $offset
+     * @param int $offset
      *
      * @return mixed
      */
-    public function seek($offset);
+    public function seek(int $offset): mixed;
 
     /**
      * Return the current key
      *
-     * @return mixed
+     * @return string|int|null
      */
-    public function key();
+    public function key(): string|int|null;
 
     /**
      * Improve the pointer and return the current value
      *
      * @return mixed
      */
-    public function scNext();
+    public function scNext(): mixed;
 
     /**
      * Return the count of current values in the collection
      *
      * @return int
      */
-    public function count();
+    public function count(): int;
 }

@@ -14,49 +14,51 @@ class EntityAssocCollection extends AbstractEntityCollection
     /**
      * EntityAssocCollection constructor.
      *
-     * @param AssocEntityInterface[] $aEntities
+     * @param AssocEntityInterface[] $entities
      */
-    public function __construct(array $aEntities = array())
+    public function __construct(array $entities = [])
     {
-        $this->checkClasses($aEntities);
-        parent::__construct($this->indexEntities($aEntities));
+        parent::__construct($this->indexEntities($entities));
     }
 
     /**
      * Check if entity already exists
      *
-     * @param AssocEntityInterface $oEntity
+     * @param AssocEntityInterface $entity
      *
      * @return bool
      */
-    public function entityExists(AssocEntityInterface $oEntity)
+    public function entityExists(AssocEntityInterface $entity): bool
     {
-        return $this->offsetExists($oEntity->getCollectionIndex());
+        return $this->offsetExists($entity->getCollectionIndex());
     }
 
     /**
      * Set indexed entities to collection
      *
-     * @param AssocEntityInterface[] $aEntities
+     * @param AssocEntityInterface[] $values
      *
      * @return $this
      */
-    public function set(array $aEntities)
+    public function set(array $values): static
     {
-        return parent::set($this->indexEntities($aEntities));
+        return parent::set($this->indexEntities($values));
     }
 
     /**
      * Add Entity to collection
      *
-     * @param AssocEntityInterface $oEntity
+     * @param AssocEntityInterface|EntityInterface $entity
      *
      * @return $this
      */
-    public function add($oEntity)
+    public function add(AssocEntityInterface|EntityInterface $entity): static
     {
-        $this->checkClass($oEntity);
-        $this->values[$oEntity->getCollectionIndex()] = $oEntity;
+        if ($entity instanceof AssocEntityInterface) {
+            $this->values[$entity->getCollectionIndex()] = $entity;
+        } else {
+            parent::add($entity);
+        }
 
         return $this;
     }
@@ -64,33 +66,17 @@ class EntityAssocCollection extends AbstractEntityCollection
     /**
      * Create index array
      *
-     * @param AssocEntityInterface[] $aEntities
+     * @param AssocEntityInterface[] $entities
      *
      * @return array
      */
-    protected function indexEntities(array $aEntities)
+    protected function indexEntities(array $entities): array
     {
-        $aIndexEntities = array();
-        foreach ($aEntities as $oEntity) {
-            $aIndexEntities[$oEntity->getCollectionIndex()] = $oEntity;
+        $indexEntities = [];
+        foreach ($entities as $entity) {
+            $indexEntities[$entity->getCollectionIndex()] = $entity;
         }
 
-        return $aIndexEntities;
-    }
-
-    /**
-     * Check class
-     *
-     * @param AssocEntityInterface $oEntity
-     *
-     * @return $this
-     */
-    protected function checkClass($oEntity)
-    {
-        if (false === $oEntity instanceof AssocEntityInterface) {
-            throw new \InvalidArgumentException('Expect entity of class \SimpleCollection\Entity\AssocEntityInterface');
-        }
-
-        return $this;
+        return $indexEntities;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace SimpleCollection\Entity;
 
 /**
@@ -14,5 +15,5 @@ interface EntityInterface
      *
      * @return array
      */
-    public function toArray();
+    public function toArray(): array;
 }
