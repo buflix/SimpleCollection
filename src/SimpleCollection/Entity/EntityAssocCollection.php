@@ -2,8 +2,6 @@
 
 namespace SimpleCollection\Entity;
 
-use InvalidArgumentException;
-
 /**
  * Associative collection
  *
@@ -20,7 +18,6 @@ class EntityAssocCollection extends AbstractEntityCollection
      */
     public function __construct(array $entities = [])
     {
-        $this->checkClasses($entities);
         parent::__construct($this->indexEntities($entities));
     }
 
@@ -39,26 +36,29 @@ class EntityAssocCollection extends AbstractEntityCollection
     /**
      * Set indexed entities to collection
      *
-     * @param AssocEntityInterface[] $entities
+     * @param AssocEntityInterface[] $values
      *
      * @return $this
      */
-    public function set(array $entities): static
+    public function set(array $values): static
     {
-        return parent::set($this->indexEntities($entities));
+        return parent::set($this->indexEntities($values));
     }
 
     /**
      * Add Entity to collection
      *
-     * @param AssocEntityInterface $entity
+     * @param AssocEntityInterface|EntityInterface $entity
      *
      * @return $this
      */
-    public function add(mixed $entity): static
+    public function add(AssocEntityInterface|EntityInterface $entity): static
     {
-        $this->checkClass($entity);
-        $this->values[$entity->getCollectionIndex()] = $entity;
+        if ($entity instanceof AssocEntityInterface) {
+            $this->values[$entity->getCollectionIndex()] = $entity;
+        } else {
+            parent::add($entity);
+        }
 
         return $this;
     }
@@ -78,21 +78,5 @@ class EntityAssocCollection extends AbstractEntityCollection
         }
 
         return $indexEntities;
-    }
-
-    /**
-     * Check class
-     *
-     * @param AssocEntityInterface $entity
-     *
-     * @return $this
-     */
-    protected function checkClass(mixed $entity): static
-    {
-        if (false === $entity instanceof AssocEntityInterface) {
-            throw new InvalidArgumentException('Expect entity of class \SimpleCollection\Entity\AssocEntityInterface');
-        }
-
-        return $this;
     }
 }

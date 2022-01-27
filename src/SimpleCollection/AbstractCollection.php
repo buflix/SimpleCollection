@@ -4,6 +4,7 @@ namespace SimpleCollection;
 
 use InvalidArgumentException;
 use OutOfBoundsException;
+use SimpleCollection\Entity\EntityInterface;
 use SimpleCollection\Service\Pagination\PaginationCollectionInterface;
 
 /**
@@ -438,8 +439,7 @@ abstract class AbstractCollection implements \Countable, \ArrayAccess, \Seekable
      * @return array
      * @see \JsonSerializable
      */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return $this->getAll();
     }

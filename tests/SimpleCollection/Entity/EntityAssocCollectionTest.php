@@ -20,7 +20,7 @@ class EntityAssocCollectionTest extends TestCase
      *
      * @var EntityAssocCollection
      */
-    protected $object;
+    protected EntityAssocCollection $object;
 
     /**
      * Setup the object to test
@@ -163,9 +163,9 @@ class EntityAssocCollectionTest extends TestCase
      */
     public function testCheckClassException()
     {
-        $this->expectException(\InvalidArgumentException::class);
         $oMock = $this->createMock(EntityInterface::class);
         $this->object->add($oMock);
+        $this->assertCount(1, $this->object);
     }
 
     /**
